@@ -310,7 +310,8 @@ public class CatalogResources {
 					lLength += oTempFile.length();
 				}
 			}
-			oResponseBuilder.header("Content-Length", lLength);
+			//oResponseBuilder.header("Content-Length", lLength);
+			oResponseBuilder.header("Transfer-Encoding", "chunked");
 			Wasdi.DebugLog("CatalogResources.zipOnTheFlyAndStream: return ");
 			return oResponseBuilder.build();
 		} catch (Exception e) {
