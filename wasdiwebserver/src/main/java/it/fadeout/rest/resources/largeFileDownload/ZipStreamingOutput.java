@@ -29,15 +29,18 @@ import it.fadeout.Wasdi;
  */
 public class ZipStreamingOutput implements StreamingOutput {
 
-	final Map<String,File> m_aoFileEntries;
+	final private Map<String,File> m_aoFileEntries;
+	final private long m_lDeclaredLength; 
+	
 
-	public ZipStreamingOutput(Map<String,File> aoInitMap) {
+	public ZipStreamingOutput(Map<String,File> aoInitMap, long lLength) {
 		Wasdi.DebugLog("ZipStreamingOutput.ZipStreamingOutput");
 		if(null==aoInitMap) {
 			throw new NullPointerException("ZipStreamingOutput.ZipStreamingOutput: passed a null Map");
 		}
 
 		m_aoFileEntries = aoInitMap;
+		m_lDeclaredLength = lLength;
 	}
 
 	/* (non-Javadoc)
@@ -56,6 +59,7 @@ public class ZipStreamingOutput implements StreamingOutput {
 		//TODO try reducing the compression to increase speed
 		oZipOutputStream.setLevel(0);
 		InputStream oInputStream = null;
+		Long lTotalBytes = 0l;
 		try {
 			Set<String> oZippedFileNames = m_aoFileEntries.keySet();
 			int iTotalFiles = m_aoFileEntries.size();
@@ -80,6 +84,7 @@ public class ZipStreamingOutput implements StreamingOutput {
 						//IOUtils.copy(oInputStream, oZipOutputStream, 16384);
 						lCopiedBytes = IOUtils.copy(oInputStream, oZipOutputStream);
 					}
+					lTotalBytes += lCopiedBytes;
 					Wasdi.DebugLog("ZipStreamingOutput.write: file " + oZippedName + "copied " + lCopiedBytes + " B out of " + oFileToZip.length());
 					//
 					//TODO try different buffer sizes
@@ -112,6 +117,11 @@ public class ZipStreamingOutput implements StreamingOutput {
 			//oZipOutputStream.flush();
 			oZipOutputStream.close();
 			Wasdi.DebugLog("ZipStreamingOutput.write: ZipOutputStream closed");
+			//TODO add padding to outputstream
+			while( lTotalBytes < m_lDeclaredLength) {
+				oOutputStream.write(0);
+				lTotalBytes++;
+			}
 		} catch (Exception e) {
 			Wasdi.DebugLog("ZipStreamingOutput.write: exception caught:");
 			Wasdi.DebugLog("ZipStreamingOutput.write: "+e.getMessage() );

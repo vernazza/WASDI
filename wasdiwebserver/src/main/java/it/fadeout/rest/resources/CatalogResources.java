@@ -154,7 +154,7 @@ public class CatalogResources {
 			Wasdi.DebugLog("CatalogResources.getEntryFile: file " + sFileName + " not found");
 			return null;
 		}
-		
+
 		String sFilePath = oDownloadedFile.getFilePath();
 
 
@@ -192,7 +192,7 @@ public class CatalogResources {
 				Wasdi.DebugLog("CatalogResources.DownloadEntryByName: user not authorized");
 				return Response.status(Status.UNAUTHORIZED).build();
 			}
-			
+
 			File oFile = this.getEntryFile(sFileName);
 			ResponseBuilder oResponseBuilder = null;
 			if(oFile == null) {
@@ -241,34 +241,34 @@ public class CatalogResources {
 			Stack<File> aoFileStack = new Stack<File>();
 			aoFileStack.push(oInitialFile);
 			String sBasePath = oInitialFile.getAbsolutePath();
-			
+
 			Wasdi.DebugLog("CatalogResources.zipOnTheFlyAndStream: sBasePath = " + sBasePath);
-			
+
 			int iLast = sBasePath.lastIndexOf(".dim");
 			String sDir = sBasePath.substring(0, iLast) + ".data";
-			
+
 			Wasdi.DebugLog("CatalogResources.zipOnTheFlyAndStream: sDir = " + sDir);
-			
+
 			File oFile = new File(sDir);
 			aoFileStack.push(oFile);
-			
+
 			iLast = sBasePath.lastIndexOf(oInitialFile.getName());
 			sBasePath = sBasePath.substring(0, iLast);
-			
+
 			if(!sBasePath.endsWith("/") && !sBasePath.endsWith("\\")) {
 				sBasePath = sBasePath + "/";
 			}
-			
+
 			Wasdi.DebugLog("CatalogResources.zipOnTheFlyAndStream: updated sBasePath = " + sBasePath);
-			
+
 			int iBaseLen = sBasePath.length();
 			Map<String, File> aoFileEntries = new HashMap<>();
-			
+
 			while(aoFileStack.size()>=1) {
 				//Wasdi.DebugLog("CatalogResources.zipOnTheFlyAndStream: pushing files into stack");
 				oFile = aoFileStack.pop();
 				String sAbsolutePath = oFile.getAbsolutePath();
-				
+
 				Wasdi.DebugLog("CatalogResources.zipOnTheFlyAndStream: sAbsolute Path " + sAbsolutePath);
 
 				if(oFile.isDirectory()) {
@@ -280,28 +280,15 @@ public class CatalogResources {
 						aoFileStack.push(oChild);
 					}
 				}
-				
+
 				Wasdi.DebugLog("CatalogResources.zipOnTheFlyAndStream: sAbsolute Path 2 " + sAbsolutePath);
-				
+
 				String sRelativePath = sAbsolutePath.substring(iBaseLen);
 				Wasdi.DebugLog("CatalogResources.zipOnTheFlyAndStream: adding file " + sRelativePath +" for compression");
 				aoFileEntries.put(sRelativePath,oFile);
 			}
 			Wasdi.DebugLog("CatalogResources.zipOnTheFlyAndStream: done preparing map, added " + aoFileEntries.size() + " files");
-						
-			ZipStreamingOutput oStream = new ZipStreamingOutput(aoFileEntries);
 
-			// Set response headers and return 
-			ResponseBuilder oResponseBuilder = Response.ok(oStream);
-			String sFileName = oInitialFile.getName();
-			
-			Wasdi.DebugLog("CatalogResources.zipOnTheFlyAndStream: sFileName1 " + sFileName);
-			
-			sFileName = sFileName.substring(0, sFileName.lastIndexOf(".dim") ) + ".zip";
-			
-			Wasdi.DebugLog("CatalogResources.zipOnTheFlyAndStream: sFileName2 Path " + sFileName);
-			
-			oResponseBuilder.header("Content-Disposition", "attachment; filename=\""+ sFileName +"\"");
 			Long lLength = 0L;
 			for (String sFile : aoFileEntries.keySet()) {
 				File oTempFile = aoFileEntries.get(sFile);
@@ -310,8 +297,23 @@ public class CatalogResources {
 					lLength += oTempFile.length();
 				}
 			}
-			//oResponseBuilder.header("Content-Length", lLength);
-			oResponseBuilder.header("Transfer-Encoding", "chunked");
+			ZipStreamingOutput oStream = new ZipStreamingOutput(aoFileEntries, lLength);
+
+			// Set response headers and return 
+			ResponseBuilder oResponseBuilder = Response.ok(oStream);
+			String sFileName = oInitialFile.getName();
+
+			Wasdi.DebugLog("CatalogResources.zipOnTheFlyAndStream: sFileName1 " + sFileName);
+
+			sFileName = sFileName.substring(0, sFileName.lastIndexOf(".dim") ) + ".zip";
+
+			Wasdi.DebugLog("CatalogResources.zipOnTheFlyAndStream: sFileName2 Path " + sFileName);
+
+			// headers			
+			oResponseBuilder.header("Content-Disposition", "attachment; filename=\""+ sFileName +"\"");
+			oResponseBuilder.header("Content-Length", lLength);
+			oResponseBuilder.header("Connection", "Keep-Alive");
+//			oResponseBuilder.header("Transfer-Encoding", "chunked");
 			Wasdi.DebugLog("CatalogResources.zipOnTheFlyAndStream: return ");
 			return oResponseBuilder.build();
 		} catch (Exception e) {
@@ -507,7 +509,7 @@ public class CatalogResources {
 			ProcessWorkspaceRepository oRepository = new ProcessWorkspaceRepository();
 
 			String sProcessObjId = Utils.GetRandomName();
-			
+
 			// Ingest file parameter
 			IngestFileParameter oParameter = new IngestFileParameter();
 			oParameter.setWorkspace(sWorkspace);
@@ -560,7 +562,7 @@ public class CatalogResources {
 	@Path("/upload/ingestinws")
 	@Produces({"application/json", "text/xml"})
 	public PrimitiveResult ingestFileInWorkspace(@HeaderParam("x-session-token") String sSessionId, @QueryParam("file") String sFile, @QueryParam("workspace") String sWorkspace) {
-		
+
 		// Create the result object
 		PrimitiveResult oResult = new PrimitiveResult();
 
@@ -573,10 +575,10 @@ public class CatalogResources {
 			oResult.setIntValue(401);
 			return oResult;		
 		}
-		
+
 		// Get the user account
 		String sAccount = oUser.getUserId();		
-		
+
 		// Get the file path
 		String sDownloadRootPath = m_oServletConfig.getInitParameter("DownloadRootPath");
 		if (!sDownloadRootPath.endsWith("/")) sDownloadRootPath = sDownloadRootPath + "/";
@@ -584,7 +586,7 @@ public class CatalogResources {
 		File oUserBaseDir = new File(sDownloadRootPath+sAccount+ "/" +sWorkspace+"/");
 
 		File oFilePath = new File(oUserBaseDir, sFile);
-		
+
 		// Check if the file exists 
 		if (!oFilePath.canRead()) {
 			Wasdi.DebugLog("CatalogResource.IngestFileInWorkspace: file not found. Check if it is an extension problem");
@@ -614,7 +616,7 @@ public class CatalogResources {
 			}
 
 		}
-		
+
 		try {
 			ProcessWorkspace oProcess = null;
 			ProcessWorkspaceRepository oRepository = new ProcessWorkspaceRepository();
