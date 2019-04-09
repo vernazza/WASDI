@@ -54,7 +54,7 @@ public class ZipStreamingOutput implements StreamingOutput {
 		//ZipOutputStream oZipOutputStream = new ZipOutputStream(oBufferedOutputStream);
 		ZipOutputStream oZipOutputStream = new ZipOutputStream(oOutputStream);
 		//TODO try reducing the compression to increase speed
-		//oZipOutputStream.setLevel(level);
+		oZipOutputStream.setLevel(0);
 		InputStream oInputStream = null;
 		try {
 			Set<String> oZippedFileNames = m_aoFileEntries.keySet();
