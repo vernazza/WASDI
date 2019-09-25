@@ -36,7 +36,7 @@ public abstract class BaseOperation {
         try {
             Operator oOperator = m_oSpiMulti.createOperator();
             oOperator.setSourceProduct(oSourceProduct);
-            FillSettings(oOperator, oSetting);
+            fillSettings(oOperator, oSetting);
             oTargetProduct = oOperator.getTargetProduct();
         }
         catch(Exception oEx)
@@ -49,7 +49,7 @@ public abstract class BaseOperation {
         return oTargetProduct;
     }
 
-    public abstract void FillSettings(Operator oOperator, ISetting oSetting);
+    public abstract void fillSettings(Operator oOperator, ISetting oSetting);
 
 
 }

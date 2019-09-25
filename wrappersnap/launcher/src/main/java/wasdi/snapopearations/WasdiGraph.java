@@ -335,7 +335,7 @@ public class WasdiGraph {
 		    m_oLogger.debug("WasdiGraph.execute: File size [Gb] = " + oFormat.format(dInputFileSizeGiga));
 		    m_oProcess.setFileSize(oFormat.format(dInputFileSizeGiga));
 		    //set process pid, status and progress
-			m_oProcess.setPid(GetProcessId());
+			m_oProcess.setPid(getProcessId());
 			m_oProcess.setStatus(ProcessStatus.RUNNING.name());
 			m_oProcess.setProgressPerc(0);
 			//update the process
@@ -362,7 +362,7 @@ public class WasdiGraph {
 		        //update the process
 				m_oProcess.setProgressPerc(100);
 				m_oProcess.setStatus(ProcessStatus.DONE.name());
-				m_oProcess.setOperationEndDate(Utils.GetFormatDate(new Date()));
+				m_oProcess.setOperationEndDate(Utils.getFormatDate(new Date()));
 		        if (!m_oProcessRepository.updateProcess(m_oProcess)) {
 		        	m_oLogger.error("WasdiGraph: Error during process update (terminated)");
 		        }
@@ -523,7 +523,7 @@ public class WasdiGraph {
 	 * @return
 	 * @throws Exception
 	 */
-	private int GetProcessId() throws Exception {
+	private int getProcessId() throws Exception {
         RuntimeMXBean oRuntimeMXBean = ManagementFactory.getRuntimeMXBean();
         Field oJvmField = oRuntimeMXBean.getClass().getDeclaredField("jvm");
         oJvmField.setAccessible(true);

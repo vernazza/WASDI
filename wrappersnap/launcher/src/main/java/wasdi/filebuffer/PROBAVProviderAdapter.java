@@ -38,7 +38,7 @@ public class PROBAVProviderAdapter extends ProviderAdapter {
 	}
 
 	@Override
-	public long GetDownloadFileSize(String sFileURL) throws Exception {
+	public long getDownloadFileSize(String sFileURL) throws Exception {
 		
 		/*
 		long lLenght = 0L;
@@ -108,7 +108,7 @@ public class PROBAVProviderAdapter extends ProviderAdapter {
 	}
 
 	@Override
-	public String ExecuteDownloadFile(String sFileURL, String sDownloadUser, String sDownloadPassword, String sSaveDirOnServer, ProcessWorkspace oProcessWorkspace) throws Exception {
+	public String executeDownloadFile(String sFileURL, String sDownloadUser, String sDownloadPassword, String sSaveDirOnServer, ProcessWorkspace oProcessWorkspace) throws Exception {
 		// Domain check
 		if (Utils.isNullOrEmpty(sFileURL)) {
 			m_oLogger.debug("PROBAVProviderAdapter.ExecuteDownloadFile: sFileURL is null");
@@ -120,7 +120,7 @@ public class PROBAVProviderAdapter extends ProviderAdapter {
 		}
 		setProcessWorkspace(oProcessWorkspace);
 
-		String sReturnFilePath = CopyLocalFile(sFileURL, sDownloadUser, sDownloadPassword, sSaveDirOnServer, oProcessWorkspace);
+		String sReturnFilePath = copyLocalFile(sFileURL, sDownloadUser, sDownloadPassword, sSaveDirOnServer, oProcessWorkspace);
 
 		if (!Utils.isNullOrEmpty(sReturnFilePath)) {
 			m_oLogger.debug("PROBAVProviderAdapter.ExecuteDownloadFile: File found in local repo. Return");
@@ -275,7 +275,7 @@ public class PROBAVProviderAdapter extends ProviderAdapter {
 	 * @return File Path if present, null or empty otherwise
 	 * @throws Exception
 	 */
-	public String CopyLocalFile(String sFileURL, String sDownloadUser, String sDownloadPassword,
+	public String copyLocalFile(String sFileURL, String sDownloadUser, String sDownloadPassword,
 			String sSaveDirOnServer, ProcessWorkspace oProcessWorkspace) throws Exception {
 
 		// File Descriptor
@@ -300,7 +300,7 @@ public class PROBAVProviderAdapter extends ProviderAdapter {
 				// Yes single file
 
 				// Get the final name: should be like PROBAV_L1C_20180429_230542_1_V101.HDF5
-				String sFileName = GetFileName(sFileURL);
+				String sFileName = getFileName(sFileURL);
 
 				// Split on _
 				String[] asSplittedFileName = sFileName.split("_");
@@ -373,13 +373,13 @@ public class PROBAVProviderAdapter extends ProviderAdapter {
 				}
 
 				// Update user
-				UpdateProcessProgress(20);
+				updateProcessProgress(20);
 
 				// Copy
 				FileUtils.copyFile(oSourceFile, new File(sSaveDirOnServer));
 
 				// Update user
-				UpdateProcessProgress(100);
+				updateProcessProgress(100);
 
 				return sSaveDirOnServer;
 			} else {
@@ -401,7 +401,7 @@ public class PROBAVProviderAdapter extends ProviderAdapter {
 	}
 
 	@Override
-	public String GetFileName(String sFileURL) throws Exception {
+	public String getFileName(String sFileURL) throws Exception {
 
 		return getFileNameViaHttp(sFileURL);
 		

@@ -421,7 +421,7 @@ public class ProcessWorkspaceResource {
 				if (sPrecSatus.equalsIgnoreCase(ProcessStatus.CREATED.name()) || sPrecSatus.equalsIgnoreCase(ProcessStatus.RUNNING.name())) {
 					
 					oProcessToDelete.setStatus(ProcessStatus.STOPPED.name());
-					oProcessToDelete.setOperationEndDate(Utils.GetFormatDate(new Date()));
+					oProcessToDelete.setOperationEndDate(Utils.getFormatDate(new Date()));
 					
 					if (!oRepository.updateProcess(oProcessToDelete)) {
 						Utils.debugLog("ProcessWorkspaceResource.DeleteProcess: Unable to update process status");

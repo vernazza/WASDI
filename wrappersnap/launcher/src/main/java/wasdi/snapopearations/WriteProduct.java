@@ -29,14 +29,14 @@ public class WriteProduct  {
 		this.m_oProcessWorkspace = oProcessWorkspace;
 	}
 
-	public String WriteBEAMDIMAP(Product oProduct, String sFilePath, String sFileName) throws Exception
+	public String writeBEAMDIMAP(Product oProduct, String sFilePath, String sFileName) throws Exception
     {
         String sFormat = DimapProductWriterPlugIn.DIMAP_FORMAT_NAME;
 
         return doWriteProduct(oProduct, sFilePath, sFileName, sFormat, ".dim");
     }
 
-    public String WriteGeoTiff(Product oProduct, String sFilePath, String sFileName) throws Exception
+    public String writeGeoTiff(Product oProduct, String sFilePath, String sFileName) throws Exception
     {
         return doWriteProduct(oProduct, sFilePath, sFileName, "GeoTIFF", ".tif");
     }

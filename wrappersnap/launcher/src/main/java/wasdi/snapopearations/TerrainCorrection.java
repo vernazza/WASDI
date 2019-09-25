@@ -25,7 +25,7 @@ public class TerrainCorrection extends BaseOperation{
     }
 
     @Override
-    public void FillSettings(Operator oOperator, ISetting oSetting) {
+    public void fillSettings(Operator oOperator, ISetting oSetting) {
 
         //set default value
         oOperator.setParameterDefaultValues();

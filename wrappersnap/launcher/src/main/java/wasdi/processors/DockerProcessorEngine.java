@@ -529,7 +529,7 @@ public abstract class  DockerProcessorEngine extends WasdiProcessorEngine {
 			
 			
 			if (Utils.isNullOrEmpty(oProcessWorkspace.getOperationEndDate())) {
-				oProcessWorkspace.setOperationEndDate(Utils.GetFormatDate(new Date()));
+				oProcessWorkspace.setOperationEndDate(Utils.getFormatDate(new Date()));
 			}
 		}
 		catch (Exception oEx) {

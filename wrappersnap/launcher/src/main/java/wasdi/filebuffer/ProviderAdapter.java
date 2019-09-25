@@ -60,7 +60,7 @@ public abstract class ProviderAdapter implements ProcessWorkspaceUpdateNotifier 
      * @param sFileURL URL of the file
      * @return
      */
-	public abstract long GetDownloadFileSize(String sFileURL) throws Exception;
+	public abstract long getDownloadFileSize(String sFileURL) throws Exception;
 	
 	/**
 	 * Abstract method to download the file
@@ -71,14 +71,14 @@ public abstract class ProviderAdapter implements ProcessWorkspaceUpdateNotifier 
 	 * @param oProcessWorkspace Process Workspace to update the user
 	 * @return
 	 */
-    public abstract String ExecuteDownloadFile(String sFileURL, String sDownloadUser, String sDownloadPassword, String sSaveDirOnServer, ProcessWorkspace oProcessWorkspace) throws Exception;
+    public abstract String executeDownloadFile(String sFileURL, String sDownloadUser, String sDownloadPassword, String sSaveDirOnServer, ProcessWorkspace oProcessWorkspace) throws Exception;
     
     /**
      * Abstract method to get the name of the file from the url
      * @param sFileURL URL of the file
      * @return
      */
-    public abstract String GetFileName(String sFileURL) throws Exception;
+    public abstract String getFileName(String sFileURL) throws Exception;
     
     @Override
 	public void subscribe(ProcessWorkspaceUpdateSubscriber oSubscriber) {
@@ -101,7 +101,7 @@ public abstract class ProviderAdapter implements ProcessWorkspaceUpdateNotifier 
      * @param oProcessWorkspace
      * @param iProgress
      */
-    protected void UpdateProcessProgress(int iProgress) {
+    protected void updateProcessProgress(int iProgress) {
     	
     	if (m_oProcessWorkspace == null) return;
     	m_oProcessWorkspace.setProgressPerc(iProgress);
@@ -304,7 +304,7 @@ public abstract class ProviderAdapter implements ProcessWorkspaceUpdateNotifier 
 				iTotalBytes = 0;
 				// Update the progress
 				if (nZeroes == MAX_NUM_ZEORES_DURING_READ)
-					UpdateProcessProgress(iFilePercent);
+					updateProcessProgress(iFilePercent);
 			}
 		}
 

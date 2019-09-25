@@ -22,20 +22,20 @@ public class DhUSProviderAdapter extends ProviderAdapter {
 	}
 
     @Override
-	public long GetDownloadFileSize(String sFileURL)  throws Exception  {
+	public long getDownloadFileSize(String sFileURL)  throws Exception  {
     	// Get File size using http
     	return getDownloadFileSizeViaHttp(sFileURL);
     }
 
     @Override
-    public String ExecuteDownloadFile(String sFileURL, String sDownloadUser, String sDownloadPassword, String sSaveDirOnServer, ProcessWorkspace oProcessWorkspace) throws IOException {
+    public String executeDownloadFile(String sFileURL, String sDownloadUser, String sDownloadPassword, String sSaveDirOnServer, ProcessWorkspace oProcessWorkspace) throws IOException {
     	// Download using HTTP 
     	setProcessWorkspace(oProcessWorkspace);
     	return downloadViaHttp(sFileURL, sDownloadUser, sDownloadPassword, sSaveDirOnServer);
     }
 
     @Override
-    public String GetFileName(String sFileURL) throws IOException {
+    public String getFileName(String sFileURL) throws IOException {
     	// Get File Name via http
     	return getFileNameViaHttp(sFileURL);
     }

@@ -22,7 +22,7 @@ public class Publisher {
     // Logger instance named "MyApp".
     static Logger s_oLogger = Logger.getLogger(Publisher.class);
 
-    public static String GDAL_Retile_Command = "gdal_retile.py -r bilinear -levels 4 -ps 2048 2048 -co TILED=YES";
+    public static String sGDAL_Retile_Command = "gdal_retile.py -r bilinear -levels 4 -ps 2048 2048 -co TILED=YES";
     
     public long m_lMaxMbTiffPyramid = 50L;
 
@@ -40,7 +40,7 @@ public class Publisher {
         }
     }
 
-    private boolean LaunchImagePyramidCreation(String sInputFile, String sPathName) {
+    private boolean launchImagePyramidCreation(String sInputFile, String sPathName) {
 
         String sTargetDir = sPathName;
         if (!sTargetDir.endsWith("/")) sTargetDir += "/";
@@ -59,7 +59,7 @@ public class Publisher {
             //fix permission
             Utils.fixUpPermissions(oTargetPath);
                             
-            String sCmd = String.format("%s -targetDir %s %s", GDAL_Retile_Command, sTargetDir, sInputFile);
+            String sCmd = String.format("%s -targetDir %s %s", sGDAL_Retile_Command, sTargetDir, sInputFile);
 
             s_oLogger.debug("Publisher.LaunchImagePyramidCreation: Command: " + sCmd);
 
@@ -132,13 +132,13 @@ public class Publisher {
         return  true;
     }
 
-    private String PublishImagePyramidOnGeoServer(String sFileName, String sStoreName, String sStyle, GeoServerManager oManager) throws Exception {
+    private String publishImagePyramidOnGeoServer(String sFileName, String sStoreName, String sStyle, GeoServerManager oManager) throws Exception {
 
         File oFile = new File(sFileName);
         String sPath = oFile.getParent();
 
         // Create Pyramid
-        if (!LaunchImagePyramidCreation(sFileName, sPath)) return null;
+        if (!launchImagePyramidCreation(sFileName, sPath)) return null;
 
         s_oLogger.debug("Publisher.PublishImagePyramidOnGeoServer: Publish Image Pyramid With Geoserver Manager");
 
@@ -167,7 +167,7 @@ public class Publisher {
     }
 
 
-    private String PublishGeoTiffImage(String sFileName, String sStoreName, String sEPSG, String sStyle, GeoServerManager oManager) throws Exception {
+    private String publishGeoTiffImage(String sFileName, String sStoreName, String sEPSG, String sStyle, GeoServerManager oManager) throws Exception {
 
         File oFile = new File(sFileName);
 
@@ -206,7 +206,7 @@ public class Publisher {
         long lMaxSize = m_lMaxMbTiffPyramid*1024L*1024L;
 
         // More than Gb => Pyramid, otherwise normal geotiff
-        if (lFileLenght> lMaxSize) return this.PublishImagePyramidOnGeoServer(sFileName, sStore, sStyle, oManager);
-        else  return this.PublishGeoTiffImage(sFileName, sStore, sEPSG, sStyle, oManager);
+        if (lFileLenght> lMaxSize) return this.publishImagePyramidOnGeoServer(sFileName, sStore, sStyle, oManager);
+        else  return this.publishGeoTiffImage(sFileName, sStore, sEPSG, sStyle, oManager);
     }
 }

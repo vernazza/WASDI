@@ -282,7 +282,7 @@ public class Wasdi extends ResourceConfig {
 	 * @return
 	 */
 	public static String GetFormatDate(Date oDate) {
-		return Utils.GetFormatDate(oDate);
+		return Utils.getFormatDate(oDate);
 	}
 
 	/**

@@ -64,7 +64,7 @@ public class Proofs {
 		Band band = oProduct.getBand(bandName);            
 		Product geotiffProduct = new Product(bandName, "GEOTIFF");
 		geotiffProduct.addBand(band);                 
-		String outFilePath = new WriteProduct(null, null).WriteGeoTiff(geotiffProduct, "/home/doy/tmp/wasdi/tmp/", "pippo");
+		String outFilePath = new WriteProduct(null, null).writeGeoTiff(geotiffProduct, "/home/doy/tmp/wasdi/tmp/", "pippo");
 		
 		System.out.println("Geotiff --> " + outFilePath);
 		

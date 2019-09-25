@@ -52,7 +52,7 @@ public class TestDataLayer {
 		ProcessorLog oTestLog = new ProcessorLog();
 		oTestLog.setProcessWorkspaceId("fb99a0b1-93cb-40ab-9d44-9701a7b11b9b");
 		oTestLog.setLogRow("Now put the second one!");
-		oTestLog.setLogDate(Utils.GetFormatDate(new Date()));
+		oTestLog.setLogDate(Utils.getFormatDate(new Date()));
 		
 		ProcessorLogRepository oProcessorLogRepository = new ProcessorLogRepository();
 		oProcessorLogRepository.insertProcessLog(oTestLog);

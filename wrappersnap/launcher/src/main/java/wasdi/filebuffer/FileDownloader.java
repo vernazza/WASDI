@@ -23,7 +23,7 @@ public class FileDownloader {
 	}
 	
 	protected void notify(int iPercent) {
-		m_oProviderAdapter.UpdateProcessProgress(iPercent);
+		m_oProviderAdapter.updateProcessProgress(iPercent);
 	}
 	
 	//TODO some abstract void download, to be overridden in derived classes (http: vs file:)

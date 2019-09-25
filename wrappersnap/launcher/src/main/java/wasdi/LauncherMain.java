@@ -232,7 +232,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			
 			// Set the process as running
 			s_oLogger.debug("LauncherMain: setting ProcessWorkspace start date to now");
-			oProcessWorkspace.setOperationStartDate(Utils.GetFormatDate(new Date()));
+			oProcessWorkspace.setOperationStartDate(Utils.getFormatDate(new Date()));
 			oProcessWorkspace.setStatus(ProcessStatus.RUNNING.name());
 			
 			if (!oProcessWorkspaceRepository.updateProcess(oProcessWorkspace)) {
@@ -254,7 +254,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 
 				if (oProcessWorkspace != null) {
 					oProcessWorkspace.setProgressPerc(100);
-					oProcessWorkspace.setOperationEndDate(Utils.GetFormatDate(new Date()));
+					oProcessWorkspace.setOperationEndDate(Utils.getFormatDate(new Date()));
 					oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
 					if (!oProcessWorkspaceRepository.updateProcess(oProcessWorkspace)) {
 						s_oLogger.debug("LauncherMain FINAL catch: Error during process update (terminated) " + sParameter);
@@ -312,7 +312,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 		try {
 
 			// Set Global Settings
-			Publisher.GDAL_Retile_Command = ConfigReader.getPropValue("GDAL_RETILE", Publisher.GDAL_Retile_Command);
+			Publisher.sGDAL_Retile_Command = ConfigReader.getPropValue("GDAL_RETILE", Publisher.sGDAL_Retile_Command);
 			MongoRepository.SERVER_ADDRESS = ConfigReader.getPropValue("MONGO_ADDRESS");
 			MongoRepository.SERVER_PORT = Integer.parseInt(ConfigReader.getPropValue("MONGO_PORT"));
 			MongoRepository.DB_NAME = ConfigReader.getPropValue("MONGO_DBNAME");
@@ -619,7 +619,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 
 			if (oProcessWorkspace != null) {
 				//get file size
-				long lFileSizeByte = oProviderAdapter.GetDownloadFileSize(oParameter.getUrl());
+				long lFileSizeByte = oProviderAdapter.getDownloadFileSize(oParameter.getUrl());
 				//set file size
 				setFileSizeToProcess(lFileSizeByte, oProcessWorkspace);
 
@@ -642,7 +642,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			if (ConfigReader.getPropValue("DOWNLOAD_ACTIVE").equals("true")) {
 
 				// Get the file name
-				String sFileNameWithoutPath = oProviderAdapter.GetFileName(oParameter.getUrl());
+				String sFileNameWithoutPath = oProviderAdapter.getFileName(oParameter.getUrl());
 				s_oLogger.debug("LauncherMain.Download: File to download: " + sFileNameWithoutPath);
 				
 				DownloadedFile oAlreadyDownloaded = null;
@@ -680,7 +680,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 					}
 
 					// No: it isn't: download it
-					sFileName = oProviderAdapter.ExecuteDownloadFile(oParameter.getUrl(), oParameter.getDownloadUser(), oParameter.getDownloadPassword(), sDownloadPath, oProcessWorkspace);
+					sFileName = oProviderAdapter.executeDownloadFile(oParameter.getUrl(), oParameter.getDownloadUser(), oParameter.getDownloadPassword(), sDownloadPath, oProcessWorkspace);
 
 					if (Utils.isNullOrEmpty(sFileName)) {
 						int iLastError = oProviderAdapter.getLastServerError();
@@ -1203,7 +1203,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			s_oLogger.debug("LauncherMain.ExecuteOperation: Save Output Product " + sTargetFileName);
 
 			//writing product in default snap format
-			String sTargetAbsFileName = oWriter.WriteBEAMDIMAP(oTargetProduct, sPath, sTargetFileName);
+			String sTargetAbsFileName = oWriter.writeBEAMDIMAP(oTargetProduct, sPath, sTargetFileName);
 
 			if (Utils.isNullOrEmpty(sTargetAbsFileName))
 			{
@@ -1398,7 +1398,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 					Band oBand = oProduct.getBand(oParameter.getBandName());            
 					Product oGeotiffProduct = new Product(oParameter.getBandName(), "GEOTIFF");
 					oGeotiffProduct.addBand(oBand);                 
-					sOutputFilePath = new WriteProduct(oProcessWorkspaceRepository, oProcessWorkspace).WriteGeoTiff(oGeotiffProduct, sTargetDir, sLayerId);
+					sOutputFilePath = new WriteProduct(oProcessWorkspaceRepository, oProcessWorkspace).writeGeoTiff(oGeotiffProduct, sTargetDir, sLayerId);
 					oOutputFile = new File(sOutputFilePath);
 					s_oLogger.debug( "LauncherMain.PublishBandImage:  Geotiff File Created (EPSG=" + sEPSG + "): " + sOutputFilePath);
 
@@ -1626,7 +1626,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			}
 
 			s_oLogger.debug("LauncherMain.RasterGeometricResample: convert product to view model");
-			String sOutFile = oWriter.WriteBEAMDIMAP(oResampledProduct, sPath, sFileNameOnly+"_resampled");
+			String sOutFile = oWriter.writeBEAMDIMAP(oResampledProduct, sPath, sFileNameOnly+"_resampled");
 
 			addProductToDbAndWorkspaceAndSendToRabbit(null, sOutFile, oParameter.getWorkspace(), oParameter.getExchange(), LauncherOperations.RASTERGEOMETRICRESAMPLE.name(), null);
 			if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.DONE.name());
@@ -2485,7 +2485,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			if (oProcessWorkspace != null) {
 				//update the process
 				oProcessWorkspace.setProgressPerc(100);
-				oProcessWorkspace.setOperationEndDate(Utils.GetFormatDate(new Date()));
+				oProcessWorkspace.setOperationEndDate(Utils.getFormatDate(new Date()));
 				if (!oProcessWorkspaceRepository.updateProcess(oProcessWorkspace)) {
 					s_oLogger.debug("LauncherMain.CloseProcessWorkspace: Error during process update (terminated)");
 				}
@@ -2553,8 +2553,8 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			return;
 		}
 
-		s_oLogger.debug("LauncherMain.SetFileSizeToProcess: File size  = " + Utils.GetFormatFileDimension(lSize));
-		oProcessWorkspace.setFileSize(Utils.GetFormatFileDimension(lSize));
+		s_oLogger.debug("LauncherMain.SetFileSizeToProcess: File size  = " + Utils.getFormatFileDimension(lSize));
+		oProcessWorkspace.setFileSize(Utils.getFormatFileDimension(lSize));
 	}
 
 

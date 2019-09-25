@@ -128,7 +128,7 @@ public class DownloadManager {
 					System.out.println("\tdownloading " + oResult.getSummary() + " --> " + oResult.getLink());
 					//TODO implement subscriber interface
 					//TODO subscribe
-					oProviderAdapter.ExecuteDownloadFile(oResult.getLink(), m_sproviderUser, m_sproviderPassword, m_odestinationDir.getAbsolutePath(), null);
+					oProviderAdapter.executeDownloadFile(oResult.getLink(), m_sproviderUser, m_sproviderPassword, m_odestinationDir.getAbsolutePath(), null);
 					//TODO unsubscribe
 					
 					System.out.println("\t\tdone");

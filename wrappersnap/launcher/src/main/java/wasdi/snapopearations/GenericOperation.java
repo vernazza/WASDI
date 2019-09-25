@@ -18,7 +18,7 @@ public class GenericOperation extends BaseOperation{
     }
 
     @Override
-    public void FillSettings(Operator oOperator, ISetting oSetting) {
+    public void fillSettings(Operator oOperator, ISetting oSetting) {
 
         oOperator.setParameterDefaultValues();
         if (oSetting == null)

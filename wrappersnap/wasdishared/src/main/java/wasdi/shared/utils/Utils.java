@@ -146,12 +146,12 @@ public class Utils {
 
 	}
 
-	public static String GetFormatDate(Date oDate) {
+	public static String getFormatDate(Date oDate) {
 
 		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(oDate);
 	}
 
-	public static String GetFormatFileDimension(long bytes) {
+	public static String getFormatFileDimension(long bytes) {
 		int unit = 1024;
 		if (bytes < unit)
 			return bytes + " B";
