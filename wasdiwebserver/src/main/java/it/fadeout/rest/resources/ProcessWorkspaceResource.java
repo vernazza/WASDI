@@ -64,10 +64,10 @@ public class ProcessWorkspaceResource {
 			List<ProcessWorkspace> aoProcess = null;
 			
 			if (iStartIndex != null && iEndIndex != null) {
-				aoProcess = oRepository.GetProcessByWorkspace(sWorkspaceId, iStartIndex, iEndIndex);
+				aoProcess = oRepository.getProcessByWorkspace(sWorkspaceId, iStartIndex, iEndIndex);
 			}
 			else {
-				aoProcess = oRepository.GetProcessByWorkspace(sWorkspaceId);
+				aoProcess = oRepository.getProcessByWorkspace(sWorkspaceId);
 			}
 
 			// For each
@@ -112,7 +112,7 @@ public class ProcessWorkspaceResource {
 			ProcessWorkspaceRepository oRepository = new ProcessWorkspaceRepository();
 
 			// Get Process List
-			List<ProcessWorkspace> aoProcess = oRepository.GetProcessByUser(oUser.getUserId());
+			List<ProcessWorkspace> aoProcess = oRepository.getProcessByUser(oUser.getUserId());
 
 			// For each
 			for (int iProcess=0; iProcess<aoProcess.size(); iProcess++) {
@@ -192,7 +192,7 @@ public class ProcessWorkspaceResource {
 			ProcessWorkspaceRepository oRepository = new ProcessWorkspaceRepository();
 
 			// Get Process List
-			List<ProcessWorkspace> aoProcess = oRepository.GetLastProcessByWorkspace(sWorkspaceId);
+			List<ProcessWorkspace> aoProcess = oRepository.getLastProcessByWorkspace(sWorkspaceId);
 
 			// For each
 			for (int iProcess=0; iProcess<aoProcess.size(); iProcess++) {
@@ -235,7 +235,7 @@ public class ProcessWorkspaceResource {
 			ProcessWorkspaceRepository oRepository = new ProcessWorkspaceRepository();
 
 			// Get Process List
-			List<ProcessWorkspace> aoProcess = oRepository.GetLastProcessByUser(oUser.getUserId());
+			List<ProcessWorkspace> aoProcess = oRepository.getLastProcessByUser(oUser.getUserId());
 
 			// For each
 			for (int iProcess=0; iProcess<aoProcess.size(); iProcess++) {
@@ -275,7 +275,7 @@ public class ProcessWorkspaceResource {
 			ProcessWorkspaceRepository oRepository = new ProcessWorkspaceRepository();
 
 			// Get Download Waiting Process List
-			List<ProcessWorkspace> aoQueuedDownloads = oRepository.GetQueuedDownloads();
+			List<ProcessWorkspace> aoQueuedDownloads = oRepository.getQueuedDownloads();
 
 			oSummaryViewModel.setAllDownloadWaiting(aoQueuedDownloads.size());
 			
@@ -291,7 +291,7 @@ public class ProcessWorkspaceResource {
 			
 			
 			// Get Processing Waiting Process List
-			List<ProcessWorkspace> aoQueuedProcessing = oRepository.GetQueuedProcess();
+			List<ProcessWorkspace> aoQueuedProcessing = oRepository.getQueuedProcess();
 
 			oSummaryViewModel.setAllProcessWaiting(aoQueuedProcessing.size());
 			
@@ -306,7 +306,7 @@ public class ProcessWorkspaceResource {
 			oSummaryViewModel.setUserProcessWaiting(iUserProcessWaiting);
 			
 			// Get IDL Waiting Process List
-			List<ProcessWorkspace> aoQueuedIDL= oRepository.GetQueuedIDL();
+			List<ProcessWorkspace> aoQueuedIDL= oRepository.getQueuedIDL();
 
 			oSummaryViewModel.setAllIDLWaiting(aoQueuedIDL.size());
 			
@@ -323,7 +323,7 @@ public class ProcessWorkspaceResource {
 			
 			
 			// Get Processing Running  List
-			List<ProcessWorkspace> aoRunningProcessing = oRepository.GetRunningProcess();
+			List<ProcessWorkspace> aoRunningProcessing = oRepository.getRunningProcess();
 
 			oSummaryViewModel.setAllProcessRunning(aoRunningProcessing.size());
 			
@@ -338,7 +338,7 @@ public class ProcessWorkspaceResource {
 			oSummaryViewModel.setUserProcessRunning(iUserProcessRunning);
 			
 			// Get Download Running Process List
-			List<ProcessWorkspace> aoRunningDownload= oRepository.GetRunningDownloads();
+			List<ProcessWorkspace> aoRunningDownload= oRepository.getRunningDownloads();
 
 			oSummaryViewModel.setAllDownloadRunning(aoRunningDownload.size());
 			
@@ -353,7 +353,7 @@ public class ProcessWorkspaceResource {
 			oSummaryViewModel.setUserDownloadRunning(iUserDownloadRunning);
 
 			// Get IDL Running  List
-			List<ProcessWorkspace> aoRunningIDL= oRepository.GetRunningIDL();
+			List<ProcessWorkspace> aoRunningIDL= oRepository.getRunningIDL();
 
 			oSummaryViewModel.setAllIDLRunning(aoRunningIDL.size());
 			
@@ -392,7 +392,7 @@ public class ProcessWorkspaceResource {
 
 			// Create repo
 			ProcessWorkspaceRepository oRepository = new ProcessWorkspaceRepository();
-			ProcessWorkspace oProcessToDelete = oRepository.GetProcessByProcessObjId(sProcessObjId);
+			ProcessWorkspace oProcessToDelete = oRepository.getProcessByProcessObjId(sProcessObjId);
 			
 			if (oProcessToDelete != null)
 			{
@@ -423,7 +423,7 @@ public class ProcessWorkspaceResource {
 					oProcessToDelete.setStatus(ProcessStatus.STOPPED.name());
 					oProcessToDelete.setOperationEndDate(Utils.GetFormatDate(new Date()));
 					
-					if (!oRepository.UpdateProcess(oProcessToDelete)) {
+					if (!oRepository.updateProcess(oProcessToDelete)) {
 						Utils.debugLog("ProcessWorkspaceResource.DeleteProcess: Unable to update process status");
 					}
 					
@@ -480,7 +480,7 @@ public class ProcessWorkspaceResource {
 			ProcessWorkspaceRepository oRepository = new ProcessWorkspaceRepository();
 
 			// Get Process List
-			ProcessWorkspace oProcessWorkspace = oRepository.GetProcessByProcessObjId(sProcessWorkspaceId);
+			ProcessWorkspace oProcessWorkspace = oRepository.getProcessByProcessObjId(sProcessWorkspaceId);
 			oProcess = buildProcessWorkspaceViewModel(oProcessWorkspace);
 
 		}
@@ -521,12 +521,12 @@ public class ProcessWorkspaceResource {
 			ProcessWorkspaceRepository oRepository = new ProcessWorkspaceRepository();
 
 			// Get Process List
-			ProcessWorkspace oProcessWorkspace = oRepository.GetProcessByProcessObjId(sProcessWorkspaceId);
+			ProcessWorkspace oProcessWorkspace = oRepository.getProcessByProcessObjId(sProcessWorkspaceId);
 			
 			oProcessWorkspace.setStatus(sStatus);
 			oProcessWorkspace.setProgressPerc(iPerc);
 
-			oRepository.UpdateProcess(oProcessWorkspace);
+			oRepository.updateProcess(oProcessWorkspace);
 			
 			oProcess = buildProcessWorkspaceViewModel(oProcessWorkspace);
 
@@ -545,8 +545,8 @@ public class ProcessWorkspaceResource {
 					
 					// Send the Asynch Message to the clients
 					Send oSendToRabbit = new Send(sExchange);
-					oSendToRabbit.SendUpdateProcessMessage(oProcessWorkspace);
-					oSendToRabbit.Free();
+					oSendToRabbit.sendUpdateProcessMessage(oProcessWorkspace);
+					oSendToRabbit.free();
 				}
 			}
 		}
@@ -587,11 +587,11 @@ public class ProcessWorkspaceResource {
 			ProcessWorkspaceRepository oRepository = new ProcessWorkspaceRepository();
 
 			// Get Process List
-			ProcessWorkspace oProcessWorkspace = oRepository.GetProcessByProcessObjId(sProcessWorkspaceId);
+			ProcessWorkspace oProcessWorkspace = oRepository.getProcessByProcessObjId(sProcessWorkspaceId);
 			
 			oProcessWorkspace.setPayload(sPayload);
 
-			oRepository.UpdateProcess(oProcessWorkspace);
+			oRepository.updateProcess(oProcessWorkspace);
 			
 			oProcess = buildProcessWorkspaceViewModel(oProcessWorkspace);
 
@@ -626,7 +626,7 @@ public class ProcessWorkspaceResource {
 			
 			// Create repo
 			ProcessWorkspaceRepository oRepository = new ProcessWorkspaceRepository();
-			oRepository.CleanQueue();
+			oRepository.cleanQueue();
 			
 		}
 		catch (Exception oEx) {

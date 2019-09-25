@@ -38,7 +38,7 @@ public class Send {
         }
 	}
 	
-	public void Free() {
+	public void free() {
 		try {
 			
 			if (m_oChannel != null) {
@@ -63,7 +63,7 @@ public class Send {
      * @return true if the message is sent, false otherwise
      * @throws IOException
      */
-    private boolean SendMsg(String sRoutingKey, String sMessageAttribute)
+    private boolean sendMsg(String sRoutingKey, String sMessageAttribute)
     {
     	if (m_oChannel == null) return false;
     	
@@ -88,7 +88,7 @@ public class Send {
      * @return
      * @throws JsonProcessingException
      */
-    public boolean SendUpdateProcessMessage(ProcessWorkspace oProcess) throws JsonProcessingException {  
+    public boolean sendUpdateProcessMessage(ProcessWorkspace oProcess) throws JsonProcessingException {  
     	
     	if (oProcess==null) return false;
     	
@@ -100,7 +100,7 @@ public class Send {
         Utils.debugLog("Send.SendUpdateProcessMessage: Send update message for process " + oProcess.getProcessObjId() + ": " + oUpdateProcessMessage.getPayload());
         
         String sJSON = MongoRepository.s_oMapper.writeValueAsString(oUpdateProcessMessage);
-        return SendMsg(oProcess.getWorkspaceId(), sJSON);
+        return sendMsg(oProcess.getWorkspaceId(), sJSON);
     }
 
     /**
@@ -112,7 +112,7 @@ public class Send {
      * @param sExchangeId Exchange Routing Key
      * @return
      */
-    public boolean SendRabbitMessage(boolean bOk, String sMessageCode, String sWorkSpaceId, Object oPayload, String sExchangeId) {
+    public boolean sendRabbitMessage(boolean bOk, String sMessageCode, String sWorkSpaceId, Object oPayload, String sExchangeId) {
 
         try {
             RabbitMessageViewModel oRabbitVM = new RabbitMessageViewModel();
@@ -125,7 +125,7 @@ public class Send {
 
             String sJSON = MongoRepository.s_oMapper.writeValueAsString(oRabbitVM);
 
-            return SendMsg(sExchangeId, sJSON);
+            return sendMsg(sExchangeId, sJSON);
         }
         catch (Exception oEx) {
         	Utils.debugLog("Send.SendRabbitMessage: ERROR " + oEx.toString());

@@ -22,7 +22,7 @@ import wasdi.shared.utils.Utils;
  */
 public class ProcessWorkspaceRepository extends MongoRepository {
 
-    public String InsertProcessWorkspace(ProcessWorkspace oProcessWorkspace) {
+    public String insertProcessWorkspace(ProcessWorkspace oProcessWorkspace) {
 
         try {
         	
@@ -40,7 +40,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         return "";
     }
 
-    public boolean DeleteProcessWorkspace(String sId) {
+    public boolean deleteProcessWorkspace(String sId) {
 
         try {
             getCollection("processworkpsace").deleteOne(new Document("_id", new ObjectId(sId)));
@@ -54,7 +54,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         return false;
     }
 
-    public boolean DeleteProcessWorkspaceByPid(int iPid) {
+    public boolean deleteProcessWorkspaceByPid(int iPid) {
 
         try {
             getCollection("processworkpsace").deleteOne(new Document("pid", iPid));
@@ -68,7 +68,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         return false;
     }
 
-    public boolean DeleteProcessWorkspaceByProcessObjId(String sProcessObjId) {
+    public boolean deleteProcessWorkspaceByProcessObjId(String sProcessObjId) {
 
         try {
             getCollection("processworkpsace").deleteOne(new Document("processObjId", sProcessObjId));
@@ -82,7 +82,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         return false;
     }    
 
-    public List<ProcessWorkspace> GetProcessByWorkspace(String sWorkspaceId) {
+    public List<ProcessWorkspace> getProcessByWorkspace(String sWorkspaceId) {
 
         final ArrayList<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
         try {
@@ -97,7 +97,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         return aoReturnList;
     }
     
-    public List<ProcessWorkspace> GetProcessByWorkspace(String sWorkspaceId, int iStartIndex, int iEndIndex) {
+    public List<ProcessWorkspace> getProcessByWorkspace(String sWorkspaceId, int iStartIndex, int iEndIndex) {
 
         final ArrayList<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
         try {
@@ -112,7 +112,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         return aoReturnList;
     }
     
-    public long CountByWorkspace(String sWorkspaceId) {
+    public long countByWorkspace(String sWorkspaceId) {
     	try {
     		long lCount = getCollection("processworkpsace").count(new Document("workspaceId", sWorkspaceId));
     		return lCount;
@@ -124,7 +124,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
     	return 0;
     }
     
-    public List<ProcessWorkspace> GetProcessByUser(String sUserId) {
+    public List<ProcessWorkspace> getProcessByUser(String sUserId) {
 
         final ArrayList<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
         try {
@@ -140,7 +140,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
     }
 
     
-    public List<ProcessWorkspace> GetQueuedProcess() {
+    public List<ProcessWorkspace> getQueuedProcess() {
 
         final ArrayList<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
         try {
@@ -163,7 +163,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
     }
     
     
-    public List<ProcessWorkspace> GetRunningProcess() {
+    public List<ProcessWorkspace> getRunningProcess() {
 
         final ArrayList<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
         try {
@@ -186,7 +186,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
     }
 
 
-    public List<ProcessWorkspace> GetQueuedDownloads() {
+    public List<ProcessWorkspace> getQueuedDownloads() {
 
         final ArrayList<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
         try {
@@ -207,7 +207,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         return aoReturnList;
     }
     
-    public List<ProcessWorkspace> GetQueuedIDL() {
+    public List<ProcessWorkspace> getQueuedIDL() {
 
         final ArrayList<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
         try {
@@ -228,7 +228,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         return aoReturnList;
     }
 
-    public List<ProcessWorkspace> GetRunningDownloads() {
+    public List<ProcessWorkspace> getRunningDownloads() {
 
         final ArrayList<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
         try {
@@ -249,7 +249,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         return aoReturnList;
     }
     
-    public List<ProcessWorkspace> GetRunningIDL() {
+    public List<ProcessWorkspace> getRunningIDL() {
 
         final ArrayList<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
         try {
@@ -287,7 +287,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
 		});
 	}
 
-    public List<ProcessWorkspace> GetLastProcessByWorkspace(String sWorkspaceId) {
+    public List<ProcessWorkspace> getLastProcessByWorkspace(String sWorkspaceId) {
 
         final ArrayList<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
         try {
@@ -305,7 +305,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         return aoReturnList;
     }
 
-    public List<ProcessWorkspace> GetLastProcessByUser(String sUserId) {
+    public List<ProcessWorkspace> getLastProcessByUser(String sUserId) {
 
         final ArrayList<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
         try {
@@ -324,7 +324,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
     }
     
     
-    public ProcessWorkspace GetProcessByProductName(String sProductName) {
+    public ProcessWorkspace getProcessByProductName(String sProductName) {
         ProcessWorkspace oProcessWorkspace = null;
         try {
 
@@ -346,7 +346,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         return oProcessWorkspace;
     }
 
-    public List<ProcessWorkspace> GetProcessByProductNameAndWorkspace(String sProductName, String sWorkspace) {
+    public List<ProcessWorkspace> getProcessByProductNameAndWorkspace(String sProductName, String sWorkspace) {
 
         final ArrayList<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
         try {
@@ -367,7 +367,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         return aoReturnList;
     }
     
-    public ProcessWorkspace GetProcessByProcessObjId(String sProcessObjId) {
+    public ProcessWorkspace getProcessByProcessObjId(String sProcessObjId) {
         ProcessWorkspace oProcessWorkspace = null;
         try {
 
@@ -389,7 +389,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         return oProcessWorkspace;
     }
 
-    public boolean UpdateProcess(ProcessWorkspace oProcessWorkspace) {
+    public boolean updateProcess(ProcessWorkspace oProcessWorkspace) {
 
         try {
         	
@@ -409,7 +409,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         return false;
     }
     
-    public boolean CleanQueue() {
+    public boolean cleanQueue() {
 
         try {
         	
@@ -429,7 +429,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
     }
 
 
-    public boolean ExistsPidProcessWorkspace(Integer iPid) {
+    public boolean existsPidProcessWorkspace(Integer iPid) {
 
         final ArrayList<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
         boolean bExists = false;

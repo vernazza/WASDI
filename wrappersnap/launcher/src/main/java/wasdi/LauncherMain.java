@@ -202,7 +202,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			
 			BaseParameter oBaseParameter = (BaseParameter) SerializationUtils.deserializeXMLToObject(sParameter);
 			ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-			oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oBaseParameter.getProcessObjId());
+			oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oBaseParameter.getProcessObjId());
 			
 			if (oProcessWorkspace == null) {
 				s_oLogger.error("Process Workspace null for parameter [" + sParameter+ "]. Exit");
@@ -235,7 +235,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			oProcessWorkspace.setOperationStartDate(Utils.GetFormatDate(new Date()));
 			oProcessWorkspace.setStatus(ProcessStatus.RUNNING.name());
 			
-			if (!oProcessWorkspaceRepository.UpdateProcess(oProcessWorkspace)) {
+			if (!oProcessWorkspaceRepository.updateProcess(oProcessWorkspace)) {
 				s_oLogger.debug("LauncherMain: Error setting ProcessWorkspace start date");
 			}		
 
@@ -256,7 +256,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 					oProcessWorkspace.setProgressPerc(100);
 					oProcessWorkspace.setOperationEndDate(Utils.GetFormatDate(new Date()));
 					oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
-					if (!oProcessWorkspaceRepository.UpdateProcess(oProcessWorkspace)) {
+					if (!oProcessWorkspaceRepository.updateProcess(oProcessWorkspace)) {
 						s_oLogger.debug("LauncherMain FINAL catch: Error during process update (terminated) " + sParameter);
 					}
 				}
@@ -274,7 +274,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			if (oProcessWorkspace != null) {
 				
 				// Read again the process workspace 
-				oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oProcessWorkspace.getProcessObjId());
+				oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oProcessWorkspace.getProcessObjId());
 				
 				
 				s_oLogger.error("Launcher Main FINAL: process status [" + oProcessWorkspace.getProcessObjId()+ "]: " + oProcessWorkspace.getStatus());
@@ -286,13 +286,13 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 					
 					oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
 					
-					if (!oProcessWorkspaceRepository.UpdateProcess(oProcessWorkspace)) {
+					if (!oProcessWorkspaceRepository.updateProcess(oProcessWorkspace)) {
 						s_oLogger.debug("LauncherMain FINAL : Error during process update (terminated) " + sParameter);
 					}					
 				}
 			}
 			
-			LauncherMain.s_oSendToRabbit.Free();
+			LauncherMain.s_oSendToRabbit.free();
 		}
 
 	}
@@ -359,7 +359,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			sExchange = oBaseParameter.getExchange();
 		} catch (Exception e) {
 			String sError = "LauncherMain.executeOperation: Impossible to deserialize Operation Parameters: operation aborted";
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false, sOperation, sWorkspace,sError,sExchange);			
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false, sOperation, sWorkspace,sError,sExchange);			
 			s_oLogger.error("LauncherMain.executeOperation:  Exception", e);
 			return;
 		}
@@ -506,7 +506,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 		}
 		catch (Exception oEx) {
 			String sError = org.apache.commons.lang.exception.ExceptionUtils.getMessage(oEx);
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false, sOperation, sWorkspace,sError,sExchange);			
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false, sOperation, sWorkspace,sError,sExchange);			
 			s_oLogger.error("LauncherMain.executeOperation Exception", oEx);
 		}
 
@@ -530,10 +530,10 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 
 			// P.Campanella 2018/03/30: handle exception and close the process
 			ProcessWorkspaceRepository oRepo = new ProcessWorkspaceRepository();
-			ProcessWorkspace oProcessWorkspace = oRepo.GetProcessByProcessObjId(oGraphParams.getProcessObjId());
+			ProcessWorkspace oProcessWorkspace = oRepo.getProcessByProcessObjId(oGraphParams.getProcessObjId());
 			updateProcessStatus(oRepo, oProcessWorkspace, ProcessStatus.ERROR, 100);
 
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false, LauncherOperations.GRAPH.name(), oGraphParams.getWorkspace(),sError,oGraphParams.getExchange());			
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false, LauncherOperations.GRAPH.name(), oGraphParams.getWorkspace(),sError,oGraphParams.getExchange());			
 		}
 	}
 	
@@ -582,7 +582,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 	private void executeWPS(WpsParameters oParameter) {
 		s_oLogger.debug("ExecuteWPS");
 		ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oParameter.getProcessObjId());
+		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oParameter.getProcessObjId());
 		
 		
 		// Work in Progress
@@ -601,7 +601,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 		String sFileName = "";
 
 		ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oParameter.getProcessObjId());
+		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oParameter.getProcessObjId());
 
 		try {
 			updateProcessStatus(oProcessWorkspaceRepository, oProcessWorkspace, ProcessStatus.RUNNING, 0);
@@ -651,12 +651,12 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 				if (!Utils.isNullOrEmpty(sFileNameWithoutPath)) {
 					
 					// First check if it is already in this workspace:
-					oAlreadyDownloaded = oDownloadedRepo.GetDownloadedFileByPath(sDownloadPath+sFileNameWithoutPath);
+					oAlreadyDownloaded = oDownloadedRepo.getDownloadedFileByPath(sDownloadPath+sFileNameWithoutPath);
 					
 					if (oAlreadyDownloaded == null) {
 						s_oLogger.debug("LauncherMain.Download: Product NOT found in the workspace, search in other workspaces");
 						// Check if it is already downloaded, in any workpsace
-						oAlreadyDownloaded = oDownloadedRepo.GetDownloadedFile(sFileNameWithoutPath);						
+						oAlreadyDownloaded = oDownloadedRepo.getDownloadedFile(sFileNameWithoutPath);						
 					}
 					else {
 						s_oLogger.debug("LauncherMain.Download: Product already found in the workspace");
@@ -670,11 +670,11 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 					if (!Utils.isNullOrEmpty(sFileNameWithoutPath)) {
 						oProcessWorkspace.setProductName(sFileNameWithoutPath);
 						//update the process
-						if (!oProcessWorkspaceRepository.UpdateProcess(oProcessWorkspace))
+						if (!oProcessWorkspaceRepository.updateProcess(oProcessWorkspace))
 							s_oLogger.debug("LauncherMain.Download: Error during process update with file name");
 
 						//send update process message
-						if (s_oSendToRabbit!=null && !s_oSendToRabbit.SendUpdateProcessMessage(oProcessWorkspace)) {
+						if (s_oSendToRabbit!=null && !s_oSendToRabbit.sendUpdateProcessMessage(oProcessWorkspace)) {
 							s_oLogger.debug("LauncherMain.Download: Error sending rabbitmq message to update process list");
 						}
 					}
@@ -717,7 +717,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 					oAlreadyDownloaded.setBoundingBox(sBoundingBox);
 					oAlreadyDownloaded.setRefDate(oProduct.getStartTime().getAsDate());
 					oAlreadyDownloaded.setCategory(DownloadedFileCategory.DOWNLOAD.name());
-					oDownloadedRepo.InsertDownloadedFile(oAlreadyDownloaded);
+					oDownloadedRepo.insertDownloadedFile(oAlreadyDownloaded);
 				}
 				else {
 					s_oLogger.debug("LauncherMain.Download: File already downloaded: make a copy");
@@ -757,7 +757,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 				s_oLogger.debug("LauncherMain.Download: file is null there must be an error");
 
 				String sError = "The name of the file to download result null";
-				if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false,LauncherOperations.DOWNLOAD.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
+				if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false,LauncherOperations.DOWNLOAD.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
 				if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
 			} else {
 				
@@ -782,7 +782,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			String sError = org.apache.commons.lang.exception.ExceptionUtils.getMessage(oEx);
 
 			if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false,LauncherOperations.DOWNLOAD.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false,LauncherOperations.DOWNLOAD.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
 		} finally {
 			s_oLogger.debug("LauncherMain.Download: finally call CloseProcessWorkspace ");
 			//update process status and send rabbit updateProcess message
@@ -814,7 +814,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			return false;
 		}
 		ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oParam.getProcessObjId());
+		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oParam.getProcessObjId());
 
 		if(null == oProcessWorkspace ) {
 			s_oLogger.debug("ftpTransfer: null Process Workspace");
@@ -990,7 +990,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 		}
 
 		ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oParameter.getProcessObjId());
+		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oParameter.getProcessObjId());
 
 		try {	
 			if (oProcessWorkspace != null) {
@@ -1065,7 +1065,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			e.printStackTrace();			
 
 			if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false,LauncherOperations.INGEST.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false,LauncherOperations.INGEST.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
 
 		} catch (Throwable e) {
 			String sMsg = "LauncherMain.Ingest: ERROR: Throwable occurrend during file ingestion";
@@ -1076,7 +1076,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			e.printStackTrace();			
 
 			if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false,LauncherOperations.INGEST.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false,LauncherOperations.INGEST.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
 		}
 		finally{
 			//update process status and send rabbit updateProcess message
@@ -1102,7 +1102,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 		oProcessWorkspace.setStatus(oProcessStatus.name());
 		oProcessWorkspace.setProgressPerc(iProgressPerc);
 		//update the process
-		if (!oProcessWorkspaceRepository.UpdateProcess(oProcessWorkspace)) {
+		if (!oProcessWorkspaceRepository.updateProcess(oProcessWorkspace)) {
 			s_oLogger.debug("Error during process update");
 		}
 		
@@ -1114,7 +1114,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 				s_oLogger.debug("Error creating Rabbit Send " + e.toString());
 			}
 		}
-		if (!s_oSendToRabbit.SendUpdateProcessMessage(oProcessWorkspace)) {
+		if (!s_oSendToRabbit.sendUpdateProcessMessage(oProcessWorkspace)) {
 			s_oLogger.debug("Error sending rabbitmq message to update process list");
 		}
 	}
@@ -1130,7 +1130,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 		s_oLogger.debug("LauncherMain.ExecuteOperation: Start operation " + oLauncherOperation);
 
 		ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oParameter.getProcessObjId());
+		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oParameter.getProcessObjId());
 
 		s_oLogger.debug("LauncherMain.ExecuteOperation: Process found: " + oParameter.getProcessObjId() + " == " + oProcessWorkspace.getProcessObjId());
 
@@ -1142,7 +1142,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 				oProcessWorkspace.setStatus(ProcessStatus.RUNNING.name());
 				oProcessWorkspace.setProgressPerc(0);
 				//update the process
-				if (!oProcessWorkspaceRepository.UpdateProcess(oProcessWorkspace)) {
+				if (!oProcessWorkspaceRepository.updateProcess(oProcessWorkspace)) {
 					s_oLogger.debug("LauncherMain.ExecuteOperation: Error during process update (starting)");
 				} else {
 					s_oLogger.debug("LauncherMain.ExecuteOperation: Updated process  " + oProcessWorkspace.getProcessObjId());
@@ -1151,7 +1151,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 
 
 			//send update process message
-			if (s_oSendToRabbit!=null && !s_oSendToRabbit.SendUpdateProcessMessage(oProcessWorkspace)) {
+			if (s_oSendToRabbit!=null && !s_oSendToRabbit.sendUpdateProcessMessage(oProcessWorkspace)) {
 				s_oLogger.debug("LauncherMain.ExecuteOperation: Error sending rabbitmq message to update process list");
 			}
 
@@ -1166,7 +1166,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 				s_oLogger.debug("LauncherMain.ExecuteOperation: file is null or empty");
 
 				String sError = "The name of input file for the operation is null";
-				if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false,oLauncherOperation.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
+				if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false,oLauncherOperation.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
 
 				return;
 			}
@@ -1233,7 +1233,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			s_oLogger.error("LauncherMain.ExecuteOperation: exception " + org.apache.commons.lang.exception.ExceptionUtils.getStackTrace(oEx));
 			String sErrorMessage = org.apache.commons.lang.exception.ExceptionUtils.getMessage(oEx);
 
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false,oLauncherOperation.name(),oParameter.getWorkspace(),sErrorMessage,oParameter.getExchange());
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false,oLauncherOperation.name(),oParameter.getWorkspace(),sErrorMessage,oParameter.getExchange());
 			if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
 		}
 		finally{
@@ -1254,7 +1254,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 
 		String sLayerId = "";
 		ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oParameter.getProcessObjId());
+		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oParameter.getProcessObjId());
 
 		try {
 
@@ -1270,7 +1270,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			String sFullPath = getWorspacePath(oParameter) + sFile;
 
 			DownloadedFilesRepository oDownloadedFilesRepository = new DownloadedFilesRepository();
-			DownloadedFile oDownloadedFile = oDownloadedFilesRepository.GetDownloadedFileByPath(sFullPath);
+			DownloadedFile oDownloadedFile = oDownloadedFilesRepository.getDownloadedFileByPath(sFullPath);
 			
 			if (oDownloadedFile == null)   {
 				s_oLogger.error("Downloaded file is null!! Return empyt layer id for ["+ sFile +"]");
@@ -1296,7 +1296,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 				String sError = "Input File path is null";
 
 				// Send KO to Rabbit
-				if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false, LauncherOperations.PUBLISHBAND.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
+				if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false, LauncherOperations.PUBLISHBAND.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
 
 				return  sLayerId;
 			}
@@ -1317,7 +1317,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 
 			// Is already published?
 			PublishedBandsRepository oPublishedBandsRepository = new PublishedBandsRepository();            
-			PublishedBand oAlreadyPublished = oPublishedBandsRepository.GetPublishedBand(sProductName,oParameter.getBandName());
+			PublishedBand oAlreadyPublished = oPublishedBandsRepository.getPublishedBand(sProductName,oParameter.getBandName());
 
 
 			updateProcessStatus(oProcessWorkspaceRepository, oProcessWorkspace, ProcessStatus.RUNNING, 10);
@@ -1332,7 +1332,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 				oVM.setProductName(sProductName);
 				oVM.setLayerId(sLayerId);
 
-				boolean bRet = s_oSendToRabbit!=null && s_oSendToRabbit.SendRabbitMessage(true,LauncherOperations.PUBLISHBAND.name(),oParameter.getWorkspace(),oVM,oParameter.getExchange());
+				boolean bRet = s_oSendToRabbit!=null && s_oSendToRabbit.sendRabbitMessage(true,LauncherOperations.PUBLISHBAND.name(),oParameter.getWorkspace(),oVM,oParameter.getExchange());
 
 				if (!bRet) s_oLogger.debug("LauncherMain.PublishBandImage: Error sending Rabbit Message");
 
@@ -1508,7 +1508,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 				oPublishedBand.setGeoserverBoundingBox(sGeoserverBBox);
 
 				// Add it the the db
-				oPublishedBandsRepository.InsertPublishedBand(oPublishedBand);
+				oPublishedBandsRepository.insertPublishedBand(oPublishedBand);
 
 				s_oLogger.debug("LauncherMain.PublishBandImage: Index Updated" );
 				s_oLogger.debug("LauncherMain.PublishBandImage: Queue = " + oParameter.getQueue() + " LayerId = " + sLayerId);
@@ -1524,7 +1524,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 				// P.Campanella 2019/05/02: Wait a little bit to make GeoServer "finish" the process
 				Thread.sleep(10000);
 
-				boolean bRet = s_oSendToRabbit!=null && s_oSendToRabbit.SendRabbitMessage(bResultPublishBand,LauncherOperations.PUBLISHBAND.name(), oParameter.getWorkspace(),oVM,oParameter.getExchange());
+				boolean bRet = s_oSendToRabbit!=null && s_oSendToRabbit.sendRabbitMessage(bResultPublishBand,LauncherOperations.PUBLISHBAND.name(), oParameter.getWorkspace(),oVM,oParameter.getExchange());
 
 				if (bRet == false) {
 					s_oLogger.debug("LauncherMain.PublishBandImage: Error sending Rabbit Message");
@@ -1539,7 +1539,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 
 			String sError = org.apache.commons.lang.exception.ExceptionUtils.getMessage(oEx);
 
-			boolean bRet = s_oSendToRabbit!=null && s_oSendToRabbit.SendRabbitMessage(false,LauncherOperations.PUBLISHBAND.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
+			boolean bRet = s_oSendToRabbit!=null && s_oSendToRabbit.sendRabbitMessage(false,LauncherOperations.PUBLISHBAND.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
 
 			if (bRet == false) {
 				s_oLogger.error("LauncherMain.PublishBandImage:  Error sending exception Rabbit Message");
@@ -1566,7 +1566,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 
 		s_oLogger.debug("LauncherMain.RasterGeometricResample: Start");
 		ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oParameter.getProcessObjId());
+		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oParameter.getProcessObjId());
 
 		try {
 
@@ -1576,9 +1576,9 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 				oProcessWorkspace.setStatus(ProcessStatus.RUNNING.name());
 				oProcessWorkspace.setProgressPerc(0);
 				//update the process
-				oProcessWorkspaceRepository.UpdateProcess(oProcessWorkspace);
+				oProcessWorkspaceRepository.updateProcess(oProcessWorkspace);
 				//send update process message
-				if (s_oSendToRabbit!=null && !s_oSendToRabbit.SendUpdateProcessMessage(oProcessWorkspace)) {
+				if (s_oSendToRabbit!=null && !s_oSendToRabbit.sendUpdateProcessMessage(oProcessWorkspace)) {
 					s_oLogger.debug("LauncherMain.RasterGeometricResample: Error sending rabbitmq message to update process list");
 				}
 			}
@@ -1637,7 +1637,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
 
 			String sError = org.apache.commons.lang.exception.ExceptionUtils.getMessage(oEx);
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false,LauncherOperations.RASTERGEOMETRICRESAMPLE.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false,LauncherOperations.RASTERGEOMETRICRESAMPLE.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
 
 		}
 		finally{
@@ -1650,7 +1650,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 	public void executeIDLProcessor(IDLProcParameter oParameter) {
 		s_oLogger.debug("LauncherMain.RunIDLProcessor: Start");
 		ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oParameter.getProcessObjId());
+		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oParameter.getProcessObjId());
 
 		try {
 
@@ -1660,9 +1660,9 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 				oProcessWorkspace.setStatus(ProcessStatus.RUNNING.name());
 				oProcessWorkspace.setProgressPerc(0);
 				//update the process
-				oProcessWorkspaceRepository.UpdateProcess(oProcessWorkspace);
+				oProcessWorkspaceRepository.updateProcess(oProcessWorkspace);
 				//send update process message
-				if (s_oSendToRabbit!=null && !s_oSendToRabbit.SendUpdateProcessMessage(oProcessWorkspace)) {
+				if (s_oSendToRabbit!=null && !s_oSendToRabbit.sendUpdateProcessMessage(oProcessWorkspace)) {
 					s_oLogger.debug("LauncherMain.RunIDLProcessor: Error sending rabbitmq message to update process list");
 				}
 			}
@@ -1707,7 +1707,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
 
 			String sError = org.apache.commons.lang.exception.ExceptionUtils.getMessage(oEx);
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false,LauncherOperations.RUNIDL.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false,LauncherOperations.RUNIDL.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
 
 		}
 		finally {
@@ -1720,7 +1720,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 	public void executeMATLABProcessor(MATLABProcParameters oParameter) {
 		s_oLogger.debug("LauncherMain.executeMATLABProcessor: Start");
 		ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oParameter.getProcessObjId());
+		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oParameter.getProcessObjId());
 
 		try {
 
@@ -1730,9 +1730,9 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 				oProcessWorkspace.setStatus(ProcessStatus.RUNNING.name());
 				oProcessWorkspace.setProgressPerc(0);
 				//update the process
-				oProcessWorkspaceRepository.UpdateProcess(oProcessWorkspace);
+				oProcessWorkspaceRepository.updateProcess(oProcessWorkspace);
 				//send update process message
-				if (s_oSendToRabbit!=null && !s_oSendToRabbit.SendUpdateProcessMessage(oProcessWorkspace)) {
+				if (s_oSendToRabbit!=null && !s_oSendToRabbit.sendUpdateProcessMessage(oProcessWorkspace)) {
 					s_oLogger.debug("LauncherMain.executeMATLABProcessor: Error sending rabbitmq message to update process list");
 				}
 			}
@@ -1785,7 +1785,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
 
 			String sError = org.apache.commons.lang.exception.ExceptionUtils.getMessage(oEx);
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false,LauncherOperations.RUNMATLAB.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false,LauncherOperations.RUNMATLAB.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
 
 		}
 		finally {			
@@ -1803,7 +1803,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 		s_oLogger.debug("LauncherMain.executeSubset: Start");
 		
 		ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oParameter.getProcessObjId());
+		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oParameter.getProcessObjId());
 		
 		
 		try {
@@ -1891,7 +1891,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
 
 			String sError = org.apache.commons.lang.exception.ExceptionUtils.getMessage(oEx);
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false,LauncherOperations.SUBSET.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false,LauncherOperations.SUBSET.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
 
 		}
 		finally {			
@@ -1912,7 +1912,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 		s_oLogger.debug("LauncherMain.executeMultiSubset: Start");
 		
 		ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oParameter.getProcessObjId());
+		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oParameter.getProcessObjId());
 		
 		
 		Product oInputProduct = null;
@@ -2054,7 +2054,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
 
 			String sError = org.apache.commons.lang.exception.ExceptionUtils.getMessage(oEx);
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false,LauncherOperations.MULTISUBSET.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false,LauncherOperations.MULTISUBSET.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
 
 		}
 		finally {	
@@ -2091,7 +2091,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 		s_oLogger.debug("LauncherMain.executeGDALMultiSubset: Start");
 		
 		ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oParameter.getProcessObjId());
+		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oParameter.getProcessObjId());
 		
 		try {
 			
@@ -2209,14 +2209,14 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 	        
 			if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.DONE.name());
 			
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(true,LauncherOperations.MULTISUBSET.name(), oParameter.getWorkspace(),"Multisubset Done",oParameter.getExchange());
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(true,LauncherOperations.MULTISUBSET.name(), oParameter.getWorkspace(),"Multisubset Done",oParameter.getExchange());
 		}
 		catch (Exception oEx) {
 			s_oLogger.error("LauncherMain.executeGDALMultiSubset: exception " + org.apache.commons.lang.exception.ExceptionUtils.getStackTrace(oEx));
 			if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
 
 			String sError = org.apache.commons.lang.exception.ExceptionUtils.getMessage(oEx);
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false,LauncherOperations.MULTISUBSET.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false,LauncherOperations.MULTISUBSET.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
 
 		}
 		finally {	
@@ -2243,7 +2243,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 		s_oLogger.debug("LauncherMain.executeGDALRegrid: Start");
 		
 		ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oParameter.getProcessObjId());
+		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oParameter.getProcessObjId());
 		
 		try {
 			
@@ -2344,14 +2344,14 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			
 			if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.DONE.name());
 			
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(true,LauncherOperations.MULTISUBSET.name(), oParameter.getWorkspace(),"Multisubset Done",oParameter.getExchange());
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(true,LauncherOperations.MULTISUBSET.name(), oParameter.getWorkspace(),"Multisubset Done",oParameter.getExchange());
 		}
 		catch (Exception oEx) {
 			s_oLogger.error("LauncherMain.executeGDALMultiSubset: exception " + org.apache.commons.lang.exception.ExceptionUtils.getStackTrace(oEx));
 			if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
 
 			String sError = org.apache.commons.lang.exception.ExceptionUtils.getMessage(oEx);
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false,LauncherOperations.MULTISUBSET.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false,LauncherOperations.MULTISUBSET.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
 
 		}
 		finally {	
@@ -2377,7 +2377,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 		
 		s_oLogger.debug("LauncherMain.executeMosaic: Start");
 		ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.GetProcessByProcessObjId(oParameter.getProcessObjId());
+		ProcessWorkspace oProcessWorkspace = oProcessWorkspaceRepository.getProcessByProcessObjId(oParameter.getProcessObjId());
 		
 		
 		try {
@@ -2417,7 +2417,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			if (oProcessWorkspace != null) oProcessWorkspace.setStatus(ProcessStatus.ERROR.name());
 
 			String sError = org.apache.commons.lang.exception.ExceptionUtils.getMessage(oEx);
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(false,LauncherOperations.MOSAIC.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(false,LauncherOperations.MOSAIC.name(),oParameter.getWorkspace(),sError,oParameter.getExchange());
 
 		}
 		finally {			
@@ -2442,7 +2442,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			ProductWorkspaceRepository oProductWorkspaceRepository = new ProductWorkspaceRepository();
 
 			// Check if product is already in the Workspace
-			if (oProductWorkspaceRepository.ExistsProductWorkspace(sProductFullPath, sWorkspaceId) == false) {
+			if (oProductWorkspaceRepository.existsProductWorkspace(sProductFullPath, sWorkspaceId) == false) {
 
 				// Create the entity
 				ProductWorkspace oProductWorkspace = new ProductWorkspace();
@@ -2451,7 +2451,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 				oProductWorkspace.setBbox(sBbox);
 
 				// Try to insert
-				if (oProductWorkspaceRepository.InsertProductWorkspace(oProductWorkspace)) {
+				if (oProductWorkspaceRepository.insertProductWorkspace(oProductWorkspace)) {
 
 					s_oLogger.debug("LauncherMain.AddProductToWorkspace:  Inserted [" +sProductFullPath + "] in WS: [" + sWorkspaceId+ "]");
 					return true;
@@ -2486,11 +2486,11 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 				//update the process
 				oProcessWorkspace.setProgressPerc(100);
 				oProcessWorkspace.setOperationEndDate(Utils.GetFormatDate(new Date()));
-				if (!oProcessWorkspaceRepository.UpdateProcess(oProcessWorkspace)) {
+				if (!oProcessWorkspaceRepository.updateProcess(oProcessWorkspace)) {
 					s_oLogger.debug("LauncherMain.CloseProcessWorkspace: Error during process update (terminated)");
 				}
 				//send update process message
-				if (s_oSendToRabbit!=null && !s_oSendToRabbit.SendUpdateProcessMessage(oProcessWorkspace)) {
+				if (s_oSendToRabbit!=null && !s_oSendToRabbit.sendUpdateProcessMessage(oProcessWorkspace)) {
 					s_oLogger.debug("LauncherMain.CloseProcessWorkspace: Error sending rabbitmq message to update process list");
 				}
 			}
@@ -2609,7 +2609,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 
 		// Check if the file is really to Add
 		DownloadedFilesRepository oDownloadedRepo = new DownloadedFilesRepository();		
-		DownloadedFile oCheck = oDownloadedRepo.GetDownloadedFileByPath(sFullPathFileName);
+		DownloadedFile oCheck = oDownloadedRepo.getDownloadedFileByPath(sFullPathFileName);
 		
 		File oFile = new File(sFullPathFileName);
 		
@@ -2656,7 +2656,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			oDownloadedProduct.setCategory(DownloadedFileCategory.COMPUTED.name());
 
 			// Insert in the Db
-			if (!oDownloadedRepo.InsertDownloadedFile(oDownloadedProduct)) {
+			if (!oDownloadedRepo.insertDownloadedFile(oDownloadedProduct)) {
 				s_oLogger.error("Impossible to Insert the new Product " + oFile.getName() + " in the database.");
 			}
 			else {
@@ -2672,7 +2672,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			
 			// Update the Product View Model
 			oCheck.setProductViewModel(oVM);
-			oDownloadedRepo.UpdateDownloadedFile(oCheck);
+			oDownloadedRepo.updateDownloadedFile(oCheck);
 			
 			// TODO: Update metadata?
 			
@@ -2685,7 +2685,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 		if (bSendToRabbit) {
 			s_oLogger.debug("LauncherMain.AddProductToDbAndSendToRabbit: Image added. Send Rabbit Message Exchange = " + sExchange);
 
-			if (s_oSendToRabbit!=null) s_oSendToRabbit.SendRabbitMessage(true,sOperation,sWorkspace,oVM,sExchange);			
+			if (s_oSendToRabbit!=null) s_oSendToRabbit.sendRabbitMessage(true,sOperation,sWorkspace,oVM,sExchange);			
 		}
 		
 		if (oReadProduct.getProduct() != null) {
@@ -2726,12 +2726,12 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
 
 			//update the process
-			if (!oProcessWorkspaceRepository.UpdateProcess(oProcessWorkspace))
+			if (!oProcessWorkspaceRepository.updateProcess(oProcessWorkspace))
 				s_oLogger.debug("LauncherMain.DownloadFile: Error during process update with process Perc");
 
 			//send update process message
 			if (LauncherMain.s_oSendToRabbit != null) {
-				if (!LauncherMain.s_oSendToRabbit.SendUpdateProcessMessage(oProcessWorkspace)) {
+				if (!LauncherMain.s_oSendToRabbit.sendUpdateProcessMessage(oProcessWorkspace)) {
 					s_oLogger.debug("LauncherMain.DownloadFile: Error sending rabbitmq message to update process list");
 				}	        	
 			}

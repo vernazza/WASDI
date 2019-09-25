@@ -19,7 +19,7 @@ import wasdi.shared.business.WorkspaceSharing;
 public class WorkspaceSharingRepository extends  MongoRepository{
 
 
-    public boolean InsertWorkspaceSharing(WorkspaceSharing oWorkspaceSharing) {
+    public boolean insertWorkspaceSharing(WorkspaceSharing oWorkspaceSharing) {
 
         try {
             String sJSON = s_oMapper.writeValueAsString(oWorkspaceSharing);
@@ -34,7 +34,7 @@ public class WorkspaceSharingRepository extends  MongoRepository{
         return false;
     }
 
-    public List<WorkspaceSharing> GetWorkspaceSharingByOwner(String sUserId) {
+    public List<WorkspaceSharing> getWorkspaceSharingByOwner(String sUserId) {
 
         final ArrayList<WorkspaceSharing> aoReturnList = new ArrayList<WorkspaceSharing>();
         try {
@@ -62,7 +62,7 @@ public class WorkspaceSharingRepository extends  MongoRepository{
         return aoReturnList;
     }
     
-    public List<WorkspaceSharing> GetWorkspaceSharingByUser(String sUserId) {
+    public List<WorkspaceSharing> getWorkspaceSharingByUser(String sUserId) {
 
         final ArrayList<WorkspaceSharing> aoReturnList = new ArrayList<WorkspaceSharing>();
         try {
@@ -91,7 +91,7 @@ public class WorkspaceSharingRepository extends  MongoRepository{
     }
 
 
-    public List<WorkspaceSharing> GetWorkspaceSharingByWorkspace(String sWorkspaceId) {
+    public List<WorkspaceSharing> getWorkspaceSharingByWorkspace(String sWorkspaceId) {
 
         final ArrayList<WorkspaceSharing> aoReturnList = new ArrayList<WorkspaceSharing>();
         try {
@@ -119,7 +119,7 @@ public class WorkspaceSharingRepository extends  MongoRepository{
         return aoReturnList;
     }
 
-    public int DeleteByWorkspaceId(String sWorkspaceId) {
+    public int deleteByWorkspaceId(String sWorkspaceId) {
 
         try {
 
@@ -137,7 +137,7 @@ public class WorkspaceSharingRepository extends  MongoRepository{
         return 0;
     }
 
-    public int DeleteByUserId(String sUserId) {
+    public int deleteByUserId(String sUserId) {
 
         try {
 
@@ -155,7 +155,7 @@ public class WorkspaceSharingRepository extends  MongoRepository{
         return 0;
     }
     
-    public int DeleteByUserIdWorkspaceId(String sUserId, String sWorkspaceId) {
+    public int deleteByUserIdWorkspaceId(String sUserId, String sWorkspaceId) {
         try {
 
             DeleteResult oDeleteResult = getCollection("workspacessharing").deleteMany(Filters.and(Filters.eq("userId", sUserId), Filters.eq("workspaceId", sWorkspaceId)));

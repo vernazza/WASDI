@@ -148,7 +148,7 @@ public class CatalogResources {
 		String sTargetFilePath = Wasdi.getWorkspacePath(m_oServletConfig, Wasdi.getWorkspaceOwner(sWorkspace), sWorkspace) + sFileName;
 
 		DownloadedFilesRepository oRepo = new DownloadedFilesRepository();
-		DownloadedFile oDownloadedFile = oRepo.GetDownloadedFileByPath(sTargetFilePath);
+		DownloadedFile oDownloadedFile = oRepo.getDownloadedFileByPath(sTargetFilePath);
 
 		if (oDownloadedFile == null) 
 		{
@@ -375,14 +375,14 @@ public class CatalogResources {
 		DownloadedFilesRepository oDownloadedFilesRepo = new DownloadedFilesRepository();
 
 		//get all my workspaces
-		List<Workspace> aoWorkspacesList = oWorkspaceRepo.GetWorkspaceByUser(sUserId);
+		List<Workspace> aoWorkspacesList = oWorkspaceRepo.getWorkspaceByUser(sUserId);
 		Map<String, Workspace> aoWorkspaces = new HashMap<String, Workspace>();
 		for (Workspace wks : aoWorkspacesList) {
 			aoWorkspaces.put(wks.getWorkspaceId(), wks);
 		}
 
 		//retrieve all compatible files
-		List<DownloadedFile> aoDownloadedFiles = oDownloadedFilesRepo.Search(oFrom, oTo, sFreeText, sCategory);
+		List<DownloadedFile> aoDownloadedFiles = oDownloadedFilesRepo.search(oFrom, oTo, sFreeText, sCategory);
 
 		for (DownloadedFile oDownloadedFile : aoDownloadedFiles) {
 
@@ -437,7 +437,7 @@ public class CatalogResources {
 			CatalogRepository oRepository = new CatalogRepository();
 
 			// Get Process List
-			List<Catalog> aoCatalogs = oRepository.GetCatalogs();
+			List<Catalog> aoCatalogs = oRepository.getCatalogs();
 
 			// For each
 			for (int iCatalog=0; iCatalog<aoCatalogs.size(); iCatalog++) {
@@ -523,7 +523,7 @@ public class CatalogResources {
 				oProcess.setUserId(sAccount);
 				oProcess.setProcessObjId(sProcessObjId);
 				oProcess.setStatus(ProcessStatus.CREATED.name());
-				oRepository.InsertProcessWorkspace(oProcess);
+				oRepository.insertProcessWorkspace(oProcess);
 				Utils.debugLog("CatalogueResource.IngestFile: Process Scheduled for Launcher");
 			}
 			catch(Exception oEx){
@@ -632,7 +632,7 @@ public class CatalogResources {
 				oProcess.setUserId(sAccount);
 				oProcess.setProcessObjId(sProcessObjId);
 				oProcess.setStatus(ProcessStatus.CREATED.name());
-				oRepository.InsertProcessWorkspace(oProcess);
+				oRepository.insertProcessWorkspace(oProcess);
 				Utils.debugLog("CatalogueResource.IngestFileInWorkspace: Process Scheduled for Launcher");
 			}
 			catch(Exception oEx){
@@ -675,7 +675,7 @@ public class CatalogResources {
 			return oResult;
 		}
 		SessionRepository oSessionRep = new SessionRepository();
-		UserSession oSession = oSessionRep.GetSession(sSessionId);
+		UserSession oSession = oSessionRep.getSession(sSessionId);
 
 		if(null==oSession) {
 			PrimitiveResult oResult = PrimitiveResult.getInvalidInstance();
@@ -733,7 +733,7 @@ public class CatalogResources {
 			SerializationUtils.serializeObjectToXML(sPath, oParams);
 
 			ProcessWorkspaceRepository oRepository = new ProcessWorkspaceRepository();
-			oRepository.InsertProcessWorkspace(oProcess);
+			oRepository.insertProcessWorkspace(oProcess);
 			Utils.debugLog("CatalogueResource.ftpTransferFile: Process Scheduled for Launcher");
 
 		} catch (Exception e) {

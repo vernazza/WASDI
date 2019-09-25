@@ -39,11 +39,11 @@ public class TestDataLayer {
         MongoRepository.DB_PWD = ConfigReader.getPropValue("MONGO_DBPWD");
         
         WorkspaceSharingRepository oWorkspaceSharingRepository = new WorkspaceSharingRepository();
-        oWorkspaceSharingRepository.DeleteByUserIdWorkspaceId("paolo", "4e956c23-64bf-4449-96a8-4695a2355452");
+        oWorkspaceSharingRepository.deleteByUserIdWorkspaceId("paolo", "4e956c23-64bf-4449-96a8-4695a2355452");
 
         ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
         
-        List<ProcessWorkspace> aoLastProcessWS = oProcessWorkspaceRepository.GetProcessByWorkspace("7d05edb2-bb7a-48fb-8c65-1939e1663afc", 0, 20);
+        List<ProcessWorkspace> aoLastProcessWS = oProcessWorkspaceRepository.getProcessByWorkspace("7d05edb2-bb7a-48fb-8c65-1939e1663afc", 0, 20);
         
         System.out.println("aoLastProcessWS count =" + aoLastProcessWS.size());
         
@@ -55,9 +55,9 @@ public class TestDataLayer {
 		oTestLog.setLogDate(Utils.GetFormatDate(new Date()));
 		
 		ProcessorLogRepository oProcessorLogRepository = new ProcessorLogRepository();
-		oProcessorLogRepository.InsertProcessLog(oTestLog);
+		oProcessorLogRepository.insertProcessLog(oTestLog);
 		
-		List<ProcessorLog> aoLogs = oProcessorLogRepository.GetLogsByProcessWorkspaceId("fb99a0b1-93cb-40ab-9d44-9701a7b11b9b");
+		List<ProcessorLog> aoLogs = oProcessorLogRepository.getLogsByProcessWorkspaceId("fb99a0b1-93cb-40ab-9d44-9701a7b11b9b");
 		
 		for (ProcessorLog oLog : aoLogs) {
 			System.out.println(oLog.getLogRow());

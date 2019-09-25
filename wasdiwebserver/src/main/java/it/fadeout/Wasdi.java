@@ -310,21 +310,21 @@ public class Wasdi extends ResourceConfig {
 			// Create Session Repository
 			SessionRepository oSessionRepo = new SessionRepository();
 			// Get The User Session
-			UserSession oSession = oSessionRepo.GetSession(sSessionId);
+			UserSession oSession = oSessionRepo.getSession(sSessionId);
 
 			if (Utils.isValidSession(oSession)) {
 				// Create User Repo
 				UserRepository oUserRepo = new UserRepository();
 				// Get the user from the session
-				User oUser = oUserRepo.GetUser(oSession.getUserId());
+				User oUser = oUserRepo.getUser(oSession.getUserId());
 
-				oSessionRepo.TouchSession(oSession);
+				oSessionRepo.touchSession(oSession);
 
 				return oUser;
 			}
 
 			// Session not valid
-			oSessionRepo.DeleteSession(oSession);
+			oSessionRepo.deleteSession(oSession);
 
 			// No Session, No User
 			return null;
@@ -380,7 +380,7 @@ public class Wasdi extends ResourceConfig {
 	 */
 	public static String getWorkspaceOwner(String sWorkspaceId) {
 		WorkspaceRepository oWorkspaceRepository = new WorkspaceRepository();
-		Workspace oWorkspace = oWorkspaceRepository.GetWorkspace(sWorkspaceId);
+		Workspace oWorkspace = oWorkspaceRepository.getWorkspace(sWorkspaceId);
 		if (oWorkspace == null)
 			return "";
 		String sWorkspaceOwner = oWorkspace.getUserId();

@@ -183,7 +183,7 @@ public class TestMain {
 	public void GetDownloadFile(){
         LauncherMain oLauncherMain = new LauncherMain();
         DownloadedFilesRepository oRepo = new DownloadedFilesRepository();
-        DownloadedFile oFile = oRepo.GetDownloadedFile("");
+        DownloadedFile oFile = oRepo.getDownloadedFile("");
 
     }
 
@@ -195,8 +195,8 @@ public class TestMain {
         oProcessWorkspace.setOperationType(LauncherOperations.DOWNLOAD.name());
         oProcessWorkspace.setWorkspaceId("test");
         oProcessWorkspace.setProductName("filename");
-        String sId = oProcessWorkspaceRepository.InsertProcessWorkspace(oProcessWorkspace);
-        oProcessWorkspaceRepository.DeleteProcessWorkspace(sId);
+        String sId = oProcessWorkspaceRepository.insertProcessWorkspace(oProcessWorkspace);
+        oProcessWorkspaceRepository.deleteProcessWorkspace(sId);
     }
 
     @SuppressWarnings("unused")
@@ -206,12 +206,12 @@ public class TestMain {
         oProcessWorkspace.setOperationType(LauncherOperations.DOWNLOAD.name());
         oProcessWorkspace.setWorkspaceId("test");
         oProcessWorkspace.setProductName("filename");
-        List<ProcessWorkspace> oList = oProcessWorkspaceRepository.GetProcessByWorkspace("test");
+        List<ProcessWorkspace> oList = oProcessWorkspaceRepository.getProcessByWorkspace("test");
     }
 
     public void GetLastProcess() {
         ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
-        List<ProcessWorkspace> oList = oProcessWorkspaceRepository.GetLastProcessByWorkspace("4b18470b-2938-4e0e-8ffe-2162ee55e7cc");   
+        List<ProcessWorkspace> oList = oProcessWorkspaceRepository.getLastProcessByWorkspace("4b18470b-2938-4e0e-8ffe-2162ee55e7cc");   
         if (oList != null) {
         	System.out.println("Found " + oList.size() + " recent processes");
         }
@@ -282,7 +282,7 @@ public class TestMain {
     public void UserRepository() {
 
         UserRepository oRepo = new UserRepository();
-        oRepo.DeleteUser("test");
+        oRepo.deleteUser("test");
 
         User oUser = new User();
         oUser.setId(1);
@@ -292,9 +292,9 @@ public class TestMain {
         oUser.setPassword("test");
 
 
-        oRepo.InsertUser(oUser);
+        oRepo.insertUser(oUser);
 
-        User oUser2 = oRepo.GetUser("test");
+        User oUser2 = oRepo.getUser("test");
 
         LauncherMain.s_oLogger.debug("User Letto " + oUser2.getName() + " " + oUser2.getSurname());
     }
@@ -310,25 +310,25 @@ public class TestMain {
         oWS.setCreationDate((double) new Date().getTime());
         oWS.setLastEditDate((double) new Date().getTime());
         oWS.setWorkspaceId(Utils.GetRandomName());
-        oWSRepo.InsertWorkspace(oWS);
+        oWSRepo.insertWorkspace(oWS);
 
         oWS.setUserId("test");
         oWS.setName("WS 2");
         oWS.setCreationDate((double) new Date().getTime());
         oWS.setLastEditDate((double) new Date().getTime());
         oWS.setWorkspaceId(Utils.GetRandomName());
-        oWSRepo.InsertWorkspace(oWS);
+        oWSRepo.insertWorkspace(oWS);
 
         oWS.setUserId("test");
         oWS.setName("WS 3");
         oWS.setCreationDate((double) new Date().getTime());
         oWS.setLastEditDate((double) new Date().getTime());
         oWS.setWorkspaceId(Utils.GetRandomName());
-        oWSRepo.InsertWorkspace(oWS);
+        oWSRepo.insertWorkspace(oWS);
 
 
 
-        List<Workspace> aoList = oWSRepo.GetWorkspaceByUser("test");
+        List<Workspace> aoList = oWSRepo.getWorkspaceByUser("test");
 
         for (int i=0; i<aoList.size(); i++) {
             Workspace oWork = aoList.get(i);
@@ -342,9 +342,9 @@ public class TestMain {
         oBand.setProductName("S1A_IW_GRDH_1SDV_20161019T171429_20161019T171454_013562_015B60_8ABB");
         oBand.setBandName("Intensity_VH");
         oBand.setLayerId("S1A_IW_GRDH_1SDV_20161019T171429_20161019T171454_013562_015B60_8ABB_Intensity_VH");
-        oRepo.InsertPublishedBand(oBand);
+        oRepo.insertPublishedBand(oBand);
 
-        PublishedBand oReadIt = oRepo.GetPublishedBand("S1A_IW_GRDH_1SDV_20161019T171429_20161019T171454_013562_015B60_8ABB","Intensity_VH");
+        PublishedBand oReadIt = oRepo.getPublishedBand("S1A_IW_GRDH_1SDV_20161019T171429_20161019T171454_013562_015B60_8ABB","Intensity_VH");
 
         if (oReadIt == null) {
             LauncherMain.s_oLogger.debug("Error");
@@ -362,8 +362,8 @@ public class TestMain {
         oPW.setWorkspaceId("6de8a7af-c383-4d34-8423-3c229e610d39");
 
         ProductWorkspaceRepository oRepo = new ProductWorkspaceRepository();
-        oRepo.InsertProductWorkspace(oPW);
-        List<ProductWorkspace> aoList =  oRepo.GetProductsByWorkspace("6de8a7af-c383-4d34-8423-3c229e610d39");
+        oRepo.insertProductWorkspace(oPW);
+        List<ProductWorkspace> aoList =  oRepo.getProductsByWorkspace("6de8a7af-c383-4d34-8423-3c229e610d39");
 
         if (aoList == null) {
             LauncherMain.s_oLogger.debug("Error");
@@ -404,8 +404,8 @@ public class TestMain {
 
         LauncherMain oLauncherMain = new LauncherMain();
         SessionRepository oRepo = new SessionRepository();
-        UserSession oSession = oRepo.GetSession("20365d0e-16e7-4370-ba60-5fb85e5beeb7");
-        oRepo.DeleteSession(oSession);
+        UserSession oSession = oRepo.getSession("20365d0e-16e7-4370-ba60-5fb85e5beeb7");
+        oRepo.deleteSession(oSession);
 
 
     }

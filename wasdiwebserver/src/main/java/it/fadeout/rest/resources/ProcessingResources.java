@@ -383,7 +383,7 @@ public class ProcessingResources {
 			}
 
 			SnapWorkflowRepository oSnapWorkflowRepository = new SnapWorkflowRepository();
-			oSnapWorkflowRepository.InsertSnapWorkflow(oWorkflow);
+			oSnapWorkflowRepository.insertSnapWorkflow(oWorkflow);
 		} catch (Exception oEx) {
 			Utils.debugLog("ProcessingResources.uploadGraph: " + oEx);
 			return Response.serverError().build();
@@ -424,7 +424,7 @@ public class ProcessingResources {
 		SnapWorkflowRepository oSnapWorkflowRepository = new SnapWorkflowRepository();
 		ArrayList<SnapWorkflowViewModel> aoRetWorkflows = new ArrayList<>();
 
-		List<SnapWorkflow> aoDbWorkflows = oSnapWorkflowRepository.GetSnapWorkflowPublicAndByUser(sUserId);
+		List<SnapWorkflow> aoDbWorkflows = oSnapWorkflowRepository.getSnapWorkflowPublicAndByUser(sUserId);
 
 		for (int i = 0; i < aoDbWorkflows.size(); i++) {
 			SnapWorkflowViewModel oVM = new SnapWorkflowViewModel();
@@ -469,7 +469,7 @@ public class ProcessingResources {
 
 		SnapWorkflowRepository oSnapWorkflowRepository = new SnapWorkflowRepository();
 
-		SnapWorkflow oWorkflow = oSnapWorkflowRepository.GetSnapWorkflow(sWorkflowId);
+		SnapWorkflow oWorkflow = oSnapWorkflowRepository.getSnapWorkflow(sWorkflowId);
 
 		if (oWorkflow == null)
 			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
@@ -489,7 +489,7 @@ public class ProcessingResources {
 			Utils.debugLog("ProcessingResource.deleteWorkflow: workflow file path is null or empty.");
 		}
 
-		oSnapWorkflowRepository.DeleteSnapWorkflow(sWorkflowId);
+		oSnapWorkflowRepository.deleteSnapWorkflow(sWorkflowId);
 
 		return Response.ok().build();
 	}
@@ -626,7 +626,7 @@ public class ProcessingResources {
 		String sGraphXml;
 
 		SnapWorkflowRepository oSnapWorkflowRepository = new SnapWorkflowRepository();
-		SnapWorkflow oWF = oSnapWorkflowRepository.GetSnapWorkflow(oSnapWorkflowViewModel.getWorkflowId());
+		SnapWorkflow oWF = oSnapWorkflowRepository.getSnapWorkflow(oSnapWorkflowViewModel.getWorkflowId());
 
 		if (oWF == null) {
 			oResult.setBoolValue(false);
@@ -1064,7 +1064,7 @@ public class ProcessingResources {
 	@GET
 	@Path("/ddspublishsaba")
 	@Produces({ "application/json" })
-	public PrimitiveResult DDSPublishSaba(@HeaderParam("x-session-token") String sSessionId,
+	public PrimitiveResult ddsPublishSaba(@HeaderParam("x-session-token") String sSessionId,
 			@QueryParam("file") String sFileName, @QueryParam("workspaceId") String sWorkspaceId) {
 
 		Utils.debugLog(
@@ -1414,7 +1414,7 @@ public class ProcessingResources {
 				oProcess.setUserId(sUserId);
 				oProcess.setProcessObjId(sProcessObjId);
 				oProcess.setStatus(ProcessStatus.CREATED.name());
-				oRepository.InsertProcessWorkspace(oProcess);
+				oRepository.insertProcessWorkspace(oProcess);
 				Utils.debugLog("ProcessingResource.ExecuteOperation: Process Scheduled for Launcher");
 			} catch (Exception oEx) {
 				Utils.debugLog("SnapOperations.ExecuteOperation: " + oEx);
@@ -1557,7 +1557,7 @@ public class ProcessingResources {
 					+ "/processors/wasdi_matlab_test_01/config.properties";
 
 			WorkspaceRepository oWorkspaceRepository = new WorkspaceRepository();
-			Workspace oWorkspace = oWorkspaceRepository.GetWorkspace(sWorkspaceId);
+			Workspace oWorkspace = oWorkspaceRepository.getWorkspace(sWorkspaceId);
 
 			File oFile = new File(sParamFullPath);
 			File oConfigFile = new File(sConfigFullPath);
@@ -1633,7 +1633,7 @@ public class ProcessingResources {
 				oProcess.setUserId(sUserId);
 				oProcess.setProcessObjId(sProcessObjId);
 				oProcess.setStatus(ProcessStatus.CREATED.name());
-				oRepository.InsertProcessWorkspace(oProcess);
+				oRepository.insertProcessWorkspace(oProcess);
 				Utils.debugLog("ProcessingResource.asynchLaunch: Process Scheduled for Launcher");
 			} catch (Exception oEx) {
 				Utils.debugLog("ProcessingResource.asynchLaunchList: Error updating process list " + oEx);
@@ -1738,7 +1738,7 @@ public class ProcessingResources {
 					+ "/processors/wasdi_matlab_test_02/config.properties";
 
 			WorkspaceRepository oWorkspaceRepository = new WorkspaceRepository();
-			Workspace oWorkspace = oWorkspaceRepository.GetWorkspace(sWorkspaceId);
+			Workspace oWorkspace = oWorkspaceRepository.getWorkspace(sWorkspaceId);
 
 			File oFile = new File(sParamFullPath);
 			File oConfigFile = new File(sConfigFullPath);
@@ -1814,7 +1814,7 @@ public class ProcessingResources {
 				oProcess.setUserId(sUserId);
 				oProcess.setProcessObjId(sProcessObjId);
 				oProcess.setStatus(ProcessStatus.CREATED.name());
-				oRepository.InsertProcessWorkspace(oProcess);
+				oRepository.insertProcessWorkspace(oProcess);
 				Utils.debugLog("ProcessingResource.asynchLaunch2: Process Scheduled for Launcher");
 			} catch (Exception oEx) {
 				Utils.debugLog("ProcessingResource.asynchLaunchList2: Error updating process list " + oEx);
@@ -1919,7 +1919,7 @@ public class ProcessingResources {
 					+ "/processors/wasdi_matlab_test_03/config.properties";
 
 			WorkspaceRepository oWorkspaceRepository = new WorkspaceRepository();
-			Workspace oWorkspace = oWorkspaceRepository.GetWorkspace(sWorkspaceId);
+			Workspace oWorkspace = oWorkspaceRepository.getWorkspace(sWorkspaceId);
 
 			File oFile = new File(sParamFullPath);
 			File oConfigFile = new File(sConfigFullPath);
@@ -1997,7 +1997,7 @@ public class ProcessingResources {
 				oProcess.setUserId(sUserId);
 				oProcess.setProcessObjId(sProcessObjId);
 				oProcess.setStatus(ProcessStatus.CREATED.name());
-				oRepository.InsertProcessWorkspace(oProcess);
+				oRepository.insertProcessWorkspace(oProcess);
 				Utils.debugLog("ProcessingResource.asynchLaunch3: Process Scheduled for Launcher");
 			} catch (Exception oEx) {
 				Utils.debugLog("ProcessingResource.asynchLaunchList3: Error updating process list " + oEx);

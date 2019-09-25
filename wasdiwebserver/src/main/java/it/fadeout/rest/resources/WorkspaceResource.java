@@ -72,7 +72,7 @@ public class WorkspaceResource {
 
 		// session validation
 		SessionRepository oSessionRepo = new SessionRepository();
-		UserSession oUserSession = oSessionRepo.GetSession(sSessionId);
+		UserSession oUserSession = oSessionRepo.getSession(sSessionId);
 		if (null == oUserSession) {
 			Utils.debugLog("WorkspaceResource.getWorkspaceListByProductName: invalid sSessionId");
 			return null;
@@ -91,7 +91,7 @@ public class WorkspaceResource {
 
 		// get workspace info for each workspace ID
 		for (String sWorkspaceID : asWorkspaces) {
-			Workspace oWorkspace = oWorkspaceRepository.GetWorkspace(sWorkspaceID);
+			Workspace oWorkspace = oWorkspaceRepository.getWorkspace(sWorkspaceID);
 			if (null != oWorkspace) {
 				WorkspaceListInfoViewModel oTemp = new WorkspaceListInfoViewModel();
 				oTemp.setWorkspaceId(oWorkspace.getWorkspaceId());
@@ -131,7 +131,7 @@ public class WorkspaceResource {
 			WorkspaceSharingRepository oWorkspaceSharingRepository = new WorkspaceSharingRepository();
 
 			// Get Workspace List
-			List<Workspace> aoWorkspaces = oWSRepository.GetWorkspaceByUser(oUser.getUserId());
+			List<Workspace> aoWorkspaces = oWSRepository.getWorkspaceByUser(oUser.getUserId());
 
 			// For each
 			for (int iWorkspaces = 0; iWorkspaces < aoWorkspaces.size(); iWorkspaces++) {
@@ -145,7 +145,7 @@ public class WorkspaceResource {
 
 				// Get Sharings
 				List<WorkspaceSharing> aoSharings = oWorkspaceSharingRepository
-						.GetWorkspaceSharingByWorkspace(oWorkspace.getWorkspaceId());
+						.getWorkspaceSharingByWorkspace(oWorkspace.getWorkspaceId());
 
 				// Add Sharings to View Model
 				if (aoSharings != null) {
@@ -164,7 +164,7 @@ public class WorkspaceResource {
 
 			// Get the list of workspace shared with this user
 			List<WorkspaceSharing> aoSharedWorkspaces = oWorkspaceSharingRepository
-					.GetWorkspaceSharingByUser(oUser.getUserId());
+					.getWorkspaceSharingByUser(oUser.getUserId());
 
 			if (aoSharedWorkspaces.size() > 0) {
 				// For each
@@ -173,7 +173,7 @@ public class WorkspaceResource {
 					// Create View Model
 					WorkspaceListInfoViewModel oWSViewModel = new WorkspaceListInfoViewModel();
 					Workspace oWorkspace = oWSRepository
-							.GetWorkspace(aoSharedWorkspaces.get(iWorkspaces).getWorkspaceId());
+							.getWorkspace(aoSharedWorkspaces.get(iWorkspaces).getWorkspaceId());
 
 					if (oWorkspace == null) {
 						Utils.debugLog("WorkspaceResult.getListByUser: WS Shared not available "
@@ -187,7 +187,7 @@ public class WorkspaceResource {
 
 					// Get Sharings
 					List<WorkspaceSharing> aoSharings = oWorkspaceSharingRepository
-							.GetWorkspaceSharingByWorkspace(oWorkspace.getWorkspaceId());
+							.getWorkspaceSharingByWorkspace(oWorkspace.getWorkspaceId());
 
 					// Add Sharings to View Model
 					if (aoSharings != null) {
@@ -245,7 +245,7 @@ public class WorkspaceResource {
 			WorkspaceSharingRepository oWorkspaceSharingRepository = new WorkspaceSharingRepository();
 
 			// Get Workspace List
-			Workspace oWorkspace = oWSRepository.GetWorkspace(sWorkspaceId);
+			Workspace oWorkspace = oWSRepository.getWorkspace(sWorkspaceId);
 
 			oVM.setUserId(oWorkspace.getUserId());
 			oVM.setWorkspaceId(oWorkspace.getWorkspaceId());
@@ -255,7 +255,7 @@ public class WorkspaceResource {
 
 			// Get Sharings
 			List<WorkspaceSharing> aoSharings = oWorkspaceSharingRepository
-					.GetWorkspaceSharingByWorkspace(oWorkspace.getWorkspaceId());
+					.getWorkspaceSharingByWorkspace(oWorkspace.getWorkspaceId());
 
 			// Add Sharings to View Model
 			if (aoSharings != null) {
@@ -299,7 +299,7 @@ public class WorkspaceResource {
 		oWorkspace.setWorkspaceId(Utils.GetRandomName());
 
 		WorkspaceRepository oWorkspaceRepository = new WorkspaceRepository();
-		if (oWorkspaceRepository.InsertWorkspace(oWorkspace)) {
+		if (oWorkspaceRepository.insertWorkspace(oWorkspace)) {
 
 			PrimitiveResult oResult = new PrimitiveResult();
 			oResult.setStringValue(oWorkspace.getWorkspaceId());
@@ -338,7 +338,7 @@ public class WorkspaceResource {
 			oWorkspace.setWorkspaceId(oViewModel.getWorkspaceId());
 
 			WorkspaceRepository oWorkspaceRepository = new WorkspaceRepository();
-			if (oWorkspaceRepository.UpdateWorkspace(oWorkspace)) {
+			if (oWorkspaceRepository.updateWorkspace(oWorkspace)) {
 
 				PrimitiveResult oResult = new PrimitiveResult();
 				oResult.setStringValue(oWorkspace.getWorkspaceId());
@@ -386,16 +386,16 @@ public class WorkspaceResource {
 				Utils.debugLog("User " + oUser.getUserId() + " is not the owner [" + sWorkspaceOwner
 						+ "]: delete the sharing, not the ws");
 				WorkspaceSharingRepository oWorkspaceSharingRepository = new WorkspaceSharingRepository();
-				oWorkspaceSharingRepository.DeleteByUserIdWorkspaceId(oUser.getUserId(), sWorkspaceId);
+				oWorkspaceSharingRepository.deleteByUserIdWorkspaceId(oUser.getUserId(), sWorkspaceId);
 				return Response.ok().build();
 			}
 
 			// get workspace path
 			String sDownloadPath = Wasdi.getWorkspacePath(m_oServletConfig, sWorkspaceOwner, sWorkspaceId);
 
-			if (oWorkspaceRepository.DeleteWorkspace(sWorkspaceId)) {
+			if (oWorkspaceRepository.deleteWorkspace(sWorkspaceId)) {
 				// get all product in workspace
-				List<ProductWorkspace> aoProducts = oProductWorkspaceRepository.GetProductsByWorkspace(sWorkspaceId);
+				List<ProductWorkspace> aoProducts = oProductWorkspaceRepository.getProductsByWorkspace(sWorkspaceId);
 
 				if (bDeleteFile) {
 					try {
@@ -407,7 +407,7 @@ public class WorkspaceResource {
 						for (ProductWorkspace oProductWorkspace : aoProducts) {
 							try {
 								String sFilePath = sDownloadPath + oProductWorkspace.getProductName();
-								oDownloadedFilesRepository.DeleteByFilePath(sFilePath);
+								oDownloadedFilesRepository.deleteByFilePath(sFilePath);
 							} catch (Exception oEx) {
 								Utils.debugLog(
 										"WorkspaceResource.DeleteWorkspace: Error deleting download on data base: "
@@ -430,7 +430,7 @@ public class WorkspaceResource {
 
 					for (ProductWorkspace oProductWorkspace : aoProducts) {
 						List<PublishedBand> aoPublishedBands = oPublishRepository
-								.GetPublishedBandsByProductName(oProductWorkspace.getProductName());
+								.getPublishedBandsByProductName(oProductWorkspace.getProductName());
 						for (PublishedBand oPublishedBand : aoPublishedBands) {
 							try {
 
@@ -442,9 +442,9 @@ public class WorkspaceResource {
 								try {
 
 									DownloadedFile oDownloadedFile = oDownloadedFilesRepository
-											.GetDownloadedFileByPath(oProductWorkspace.getProductName());
+											.getDownloadedFileByPath(oProductWorkspace.getProductName());
 									// delete published band on data base
-									oPublishRepository.DeleteByProductNameLayerId(
+									oPublishRepository.deleteByProductNameLayerId(
 											oDownloadedFile.getProductViewModel().getName(),
 											oPublishedBand.getLayerId());
 								} catch (Exception oEx) {
@@ -515,7 +515,7 @@ public class WorkspaceResource {
 			oWorkspaceSharing.setUserId(sUserId);
 			oWorkspaceSharing.setWorkspaceId(sWorkspaceId);
 			oWorkspaceSharing.setShareDate((double) oTimestamp.getTime());
-			oWorkspaceSharingRepository.InsertWorkspaceSharing(oWorkspaceSharing);
+			oWorkspaceSharingRepository.insertWorkspaceSharing(oWorkspaceSharing);
 		} catch (Exception oEx) {
 			Utils.debugLog("WorkspaceResource.ShareWorkspace: " + oEx);
 
@@ -558,7 +558,7 @@ public class WorkspaceResource {
 
 		try {
 			WorkspaceSharingRepository oWorkspaceSharingRepository = new WorkspaceSharingRepository();
-			aoWorkspaceSharing = oWorkspaceSharingRepository.GetWorkspaceSharingByWorkspace(sWorkspaceId);
+			aoWorkspaceSharing = oWorkspaceSharingRepository.getWorkspaceSharingByWorkspace(sWorkspaceId);
 		} catch (Exception oEx) {
 			Utils.debugLog("WorkspaceResource.getUsersSharedWorksace: " + oEx);
 			return null;
@@ -603,7 +603,7 @@ public class WorkspaceResource {
 		try {
 			WorkspaceSharingRepository oWorkspaceSharingRepository = new WorkspaceSharingRepository();
 
-			oWorkspaceSharingRepository.DeleteByUserIdWorkspaceId(sUserId, sWorkspaceId);
+			oWorkspaceSharingRepository.deleteByUserIdWorkspaceId(sUserId, sWorkspaceId);
 		} catch (Exception oEx) {
 			Utils.debugLog("WorkspaceResource.deleteUserSharedWorkspace: " + oEx);
 			oResult.setStringValue("Error in delete proccess");

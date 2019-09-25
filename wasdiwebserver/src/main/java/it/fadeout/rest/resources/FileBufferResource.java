@@ -104,7 +104,7 @@ public class FileBufferResource {
 				oProcess.setUserId(sUserId);
 				oProcess.setProcessObjId(sProcessObjId);
 				oProcess.setStatus(ProcessStatus.CREATED.name());
-				oRepository.InsertProcessWorkspace(oProcess);
+				oRepository.insertProcessWorkspace(oProcess);
 				Utils.debugLog("FileBufferResource.Download: Process Scheduled for Launcher, user: " + sUserId + ", process ID: " + sProcessObjId);
 				
 				oResult.setBoolValue(true);
@@ -174,7 +174,7 @@ public class FileBufferResource {
 				oProcess.setUserId(sUserId);
 				oProcess.setProcessObjId(sProcessObjId);
 				oProcess.setStatus(ProcessStatus.CREATED.name());
-				oRepository.InsertProcessWorkspace(oProcess);
+				oRepository.insertProcessWorkspace(oProcess);
 				Utils.debugLog("FileBufferResource.Publish: Process Scheduled for Launcher, user: " + sUserId + ", process ID: " + sProcessObjId);
 			}
 			catch(Exception oEx){
@@ -219,10 +219,10 @@ public class FileBufferResource {
 			
 			// Get Product List
 			DownloadedFilesRepository oDownloadedFilesRepository = new DownloadedFilesRepository();
-			DownloadedFile oDownloadedFile = oDownloadedFilesRepository.GetDownloadedFileByPath(sFullProductPath+sFileUrl);
+			DownloadedFile oDownloadedFile = oDownloadedFilesRepository.getDownloadedFileByPath(sFullProductPath+sFileUrl);
 			
 			PublishedBandsRepository oPublishedBandsRepository = new PublishedBandsRepository();
-			PublishedBand oPublishBand = oPublishedBandsRepository.GetPublishedBand(oDownloadedFile.getProductViewModel().getName(), sBand);
+			PublishedBand oPublishBand = oPublishedBandsRepository.getPublishedBand(oDownloadedFile.getProductViewModel().getName(), sBand);
 
 			if (oPublishBand != null)
 			{
@@ -272,7 +272,7 @@ public class FileBufferResource {
 				oProcess.setUserId(oUser.getUserId());
 				oProcess.setProcessObjId(sProcessObjId);
 				oProcess.setStatus(ProcessStatus.CREATED.name());
-				oRepository.InsertProcessWorkspace(oProcess);
+				oRepository.insertProcessWorkspace(oProcess);
 				Utils.debugLog("FileBufferResource.PublishBand: Process Scheduled for Launcher, user: " + sUserId +", process ID: " + sProcessObjId);
 			}
 			catch(Exception oEx){
@@ -316,9 +316,9 @@ public class FileBufferResource {
 			
 			String sFullPath = Wasdi.getWorkspacePath(m_oServletConfig, Wasdi.getWorkspaceOwner(sWorkspaceId), sWorkspaceId);
 			
-			DownloadedFile oDownloadedFile = oDownloadedFilesRepository.GetDownloadedFileByPath(sFullPath+sFileUrl);
+			DownloadedFile oDownloadedFile = oDownloadedFilesRepository.getDownloadedFileByPath(sFullPath+sFileUrl);
 			PublishedBandsRepository oPublishedBandsRepository = new PublishedBandsRepository();
-			PublishedBand oPublishBand = oPublishedBandsRepository.GetPublishedBand(oDownloadedFile.getProductViewModel().getName(), sBand);
+			PublishedBand oPublishBand = oPublishedBandsRepository.getPublishedBand(oDownloadedFile.getProductViewModel().getName(), sBand);
 
 			if (oPublishBand != null){
 				Utils.debugLog("FileBufferResource.GetBandLayerId: band already published return " +oPublishBand.getLayerId() );

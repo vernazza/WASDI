@@ -16,7 +16,7 @@ public class IDLThread extends ProcessingThread {
 
 	@Override
 	protected List<ProcessWorkspace> getQueuedProcess() {
-		List<ProcessWorkspace> queuedProcess = m_oProcessWorkspaceRepository.GetQueuedIDL();
+		List<ProcessWorkspace> queuedProcess = m_oProcessWorkspaceRepository.getQueuedIDL();
 		
 		// Reverse the collection, otherwise the older will dead of starvation
 		Collections.reverse(queuedProcess);

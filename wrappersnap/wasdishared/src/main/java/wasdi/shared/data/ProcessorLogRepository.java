@@ -20,7 +20,7 @@ import wasdi.shared.utils.Utils;
 public class ProcessorLogRepository extends MongoRepository {
 	
 
-    public String InsertProcessLog(ProcessorLog oProcessLog) {
+    public String insertProcessLog(ProcessorLog oProcessLog) {
         try {
         	if(null == oProcessLog) {
         		Utils.debugLog("ProcessorLogRepository.InsertProcessLog: oProcessorLog is null");
@@ -42,7 +42,7 @@ public class ProcessorLogRepository extends MongoRepository {
         return "";
     }
 
-    public boolean DeleteProcessorLog(String sId) {
+    public boolean deleteProcessorLog(String sId) {
         try {
             getCollection("processorlog").deleteOne(new Document("_id", new ObjectId(sId)));
 
@@ -55,7 +55,7 @@ public class ProcessorLogRepository extends MongoRepository {
         return false;
     }
 
-    public List<ProcessorLog> GetLogsByProcessWorkspaceId(String sProcessWorkspaceId) {
+    public List<ProcessorLog> getLogsByProcessWorkspaceId(String sProcessWorkspaceId) {
 
         final ArrayList<ProcessorLog> aoReturnList = new ArrayList<ProcessorLog>();
         if(!Utils.isNullOrEmpty(sProcessWorkspaceId)) {

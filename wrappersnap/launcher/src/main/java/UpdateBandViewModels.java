@@ -80,7 +80,7 @@ public class UpdateBandViewModels {
             if (Utils.isNullOrEmpty(oDownloadedFileEntity.getFileName())) {
             	System.out.println("Fixing DownloadedFile - FileName");
             	oDownloadedFileEntity.setFileName(oProductFile.getName());
-            	oDownloadedFilesRepository.UpdateDownloadedFile(oDownloadedFileEntity);
+            	oDownloadedFilesRepository.updateDownloadedFile(oDownloadedFileEntity);
             }
             
             // There was any problem?
@@ -92,8 +92,8 @@ public class UpdateBandViewModels {
             	if (oProductFile.exists()==false) {
             		
             		System.out.println("File does not Exists: delete it");
-            		oProductWorkspaceRepository.DeleteByProductName(oDownloadedFileEntity.getFileName());
-            		oDownloadedFilesRepository.DeleteByFilePath(oDownloadedFileEntity.getFilePath());
+            		oProductWorkspaceRepository.deleteByProductName(oDownloadedFileEntity.getFileName());
+            		oDownloadedFilesRepository.deleteByFilePath(oDownloadedFileEntity.getFilePath());
             		System.out.println("File does not Exists: deleted");
             	}
             	else {            		
@@ -103,7 +103,7 @@ public class UpdateBandViewModels {
             		
             		if (oDownloadedFileEntity.getProductViewModel() != null && oDownloadedFileEntity.getProductViewModel().getMetadata() != null) {
             			oDownloadedFileEntity.getProductViewModel().setMetadata(null);
-                        oDownloadedFilesRepository.UpdateDownloadedFile(oDownloadedFileEntity);
+                        oDownloadedFilesRepository.updateDownloadedFile(oDownloadedFileEntity);
                         System.out.println("Cleared Metadata");
             		}
             		
@@ -143,7 +143,7 @@ public class UpdateBandViewModels {
                 }
                 
                 oDownloadedFileEntity.getProductViewModel().setMetadata(null);
-                oDownloadedFilesRepository.UpdateDownloadedFile(oDownloadedFileEntity);
+                oDownloadedFilesRepository.updateDownloadedFile(oDownloadedFileEntity);
                 
                 //MetadataViewModel oReloaded = (MetadataViewModel) SerializationUtils.deserializeXMLToObject("C:\\Temp\\wasdi\\metadata\\"+oDownloadedFileEntity.getProductViewModel().getMetadataFileReference());
             }
@@ -160,11 +160,11 @@ public class UpdateBandViewModels {
 		for (int i=0; i<aoProductsWSs.size(); i++) {
 			ProductWorkspace oPW = aoProductsWSs.get(i);
 			
-			DownloadedFile oDF = oDownloadedFilesRepository.GetDownloadedFile(oPW.getProductName());
+			DownloadedFile oDF = oDownloadedFilesRepository.getDownloadedFile(oPW.getProductName());
 			
 			if (oDF == null) {
 				System.out.println("\nINVALID Product : " + oPW.getProductName() + " WS : " + oPW.getWorkspaceId());
-				oProductWorkspaceRepository.DeleteByProductNameWorkspace(oPW.getProductName(), oPW.getWorkspaceId());
+				oProductWorkspaceRepository.deleteByProductNameWorkspace(oPW.getProductName(), oPW.getWorkspaceId());
 				System.out.println("DELETED");
 			}
 			else {
