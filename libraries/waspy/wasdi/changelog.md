@@ -1,5 +1,33 @@
 # \_\_/== Changelog ==\\\_\_
 
+## [0.3.3] - 2020-04-10
+
+### Added
+
+- Added big tiff support to multiSubset (added flag, False by default)
+- Added wasdi.copyFileToSftp to copy a file from a workpsace to the user wasdi sftp folder 
+
+## [0.3.2] - 2020-04-02
+
+### Added
+
+- Updated waitProcesses to use Massive API
+- Updated importAndPreprocess to start all downloads in asynch way from the beginning
+- Fixed log in update Progress Perc
+
+
+## [0.3.1] - 2020-03-26
+
+### Added
+
+- Private API to set the subprocess id
+
+## [0.3.0] - 2020-03-20
+
+### Added
+
+- Support to distributed WASDI nodes
+
 ## [0.2.12] - 2020-03-18
 
 ### Added
