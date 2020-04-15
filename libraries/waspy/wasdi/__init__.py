@@ -444,6 +444,24 @@ def getBaseUrl():
     return m_sBaseUrl
 
 
+def setWorkspaceBaseUrl(sWorkspaceBaseUrl):
+    """
+    Set the Workspace specific API URL
+    :param sWorkspaceBaseUrl: Workspace API URL
+    """
+    global m_sWorkspaceBaseUrl
+    m_sWorkspaceBaseUrl = sWorkspaceBaseUrl
+
+
+def getWorkspaceBaseUrl():
+    """
+    Get the Workspace API URL
+    :return: Workspace API URL
+    """
+    global m_sWorkspaceBaseUrl
+    return m_sWorkspaceBaseUrl
+
+
 def setIsOnServer(bIsOnServer):
     """
     Set the Is on Server Flag: keep it false, as default, while developing
