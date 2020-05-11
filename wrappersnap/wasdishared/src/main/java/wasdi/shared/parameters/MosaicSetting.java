@@ -1,6 +1,7 @@
 package wasdi.shared.parameters;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MosaicSetting implements ISetting{
 
@@ -29,9 +30,14 @@ public class MosaicSetting implements ISetting{
 	
 	String outputFormat = "GeoTIFF";
 	
+	//GDAL value type: Byte, Int16, UInt16...	
+	String type = null;
+	
 	ArrayList<String> sources = new ArrayList<>();
 	ArrayList<String> variableNames = new ArrayList<>();
 	ArrayList<String> variableExpressions = new ArrayList<>();
+	// GDAL -co parameters
+	List<String> creationOptions = new ArrayList<>();
 	
 	public String getCrs() {
 		return crs;
@@ -131,6 +137,30 @@ public class MosaicSetting implements ISetting{
 	}
 	public ArrayList<String> getVariableExpressions() {
 		return variableExpressions;
+	}
+	/**
+	 * @return the asCreationOptions
+	 */
+	public List<String> getCreationOptions() {
+		return creationOptions;
+	}
+	/**
+	 * @param creationOptions the asCreationOptions to set
+	 */
+	public void setCreationOptions(List<String> creationOptions) {
+		this.creationOptions = creationOptions;
+	}
+	/**
+	 * @return the type
+	 */
+	public String getType() {
+		return type;
+	}
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(String type) {
+		this.type = type;
 	}
 	public void setVariableExpressions(ArrayList<String> variableExpressions) {
 		this.variableExpressions = variableExpressions;

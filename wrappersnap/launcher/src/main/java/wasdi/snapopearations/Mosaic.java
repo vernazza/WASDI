@@ -11,9 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.esa.snap.core.dataio.ProductIO;
-import org.esa.snap.core.datamodel.Band;
 import org.esa.snap.core.datamodel.GeoCoding;
 import org.esa.snap.core.datamodel.PixelPos;
 import org.esa.snap.core.datamodel.Product;
@@ -359,11 +357,20 @@ public class Mosaic {
 			asArgs.add(LauncherMain.snapFormat2GDALFormat(m_sOutputFileFormat));
 			
 			if (LauncherMain.snapFormat2GDALFormat(m_sOutputFileFormat).equals("GTiff")) {
+				//tiff are created compressed by default
 				asArgs.add("-co");
 				asArgs.add("COMPRESS=LZW");
 				
+				//...and by default, we assume they can be very big
 				asArgs.add("-co");
 				asArgs.add("BIGTIFF=YES");
+				
+				// multithreaded compression: NUM_THREADS=number_of_threads/ALL_CPUS: (From GDAL
+				// 2.1) Enable multi-threaded compression by specifying the number of worker
+				// threads. Worth for slow compressions such as DEFLATE or LZMA.
+				//todo check the impact of multithreading
+				asArgs.add("-co");
+				asArgs.add("NUM_THREADS=4");
 			}
 			
 			// Set No Data for input 
@@ -379,6 +386,29 @@ public class Mosaic {
 				asArgs.add("-init");
 				asArgs.add(""+m_oMosaicSetting.getNoDataValue());				
 
+			}
+			
+			//add data type
+			if(null!= m_oMosaicSetting.getType()) {
+				asArgs.add("-co");
+				asArgs.add(m_oMosaicSetting.getType());
+			}
+			
+			try {
+				//parse and add creation options, i.e., -co parameters
+				for (String sCreationOption : m_oMosaicSetting.getCreationOptions()) {
+					if(
+							//skip the options that we set by default:
+							!sCreationOption.contains("COMPRESS") &&
+							!sCreationOption.contains("BIGTIFF") &&
+							!sCreationOption.contains("NUM_THREADS")
+							) {
+						asArgs.add("-co");
+						asArgs.add(sCreationOption);
+					}
+				}	
+			} catch (Exception oE) {
+				Utils.debugLog("Mosaic.runGDALMosaic: could not parse creation params fue to: " + oE + ", skipping");
 			}
 			
 			// Pixel Size
