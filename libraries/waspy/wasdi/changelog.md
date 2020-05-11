@@ -1,25 +1,31 @@
 # \_\_/== Changelog ==\\\_\_
 
+## [0.4.3] - 2020-05-11
+
+### Changed
+
+- mosaic now accepts data type and additional gdal -co options
+
 ## [0.4.2] - 2020-04-30
 
-## Added
+### Added
 
 - added deleteWorkspace method
 
 ## [0.4.1] - 2020-04-22
 
-## Added
+### Added
 
 - added log in searchEOImages
 
 ## [0.4.0] - 2020-04-22
 
-## Added
+### Added
 
 - check for availability of params file
 - executeProcessor supporting POST other than GET
 
-## Fixed
+### Fixed
 
 - bug in getProcessorPayload due to string concatenation with non string
 

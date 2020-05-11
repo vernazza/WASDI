@@ -1,4 +1,3 @@
-
 """
 FADEOUT SOFTWARE 
 
@@ -517,7 +516,8 @@ def _loadParams():
             wasdiLog('[WARNING] _loadParams: could not open file due to: ' + str(oE))
 
     if not bParamLoaded:
-        _log('[INFO] _loadParams: wasdi could not load param file. That is fine, you can still load it later, don\'t worry')
+        _log(
+            '[INFO] _loadParams: wasdi could not load param file. That is fine, you can still load it later, don\'t worry')
 
 
 def refreshParameters():
@@ -711,7 +711,6 @@ def createWorkspace(sName=None):
         return None
 
 
-
 def deleteWorkspace(sWorkspaceId):
     """
     Delete a workspace
@@ -719,7 +718,7 @@ def deleteWorkspace(sWorkspaceId):
     :return: Workspace Id as a String if it is a success, None otherwise
     """
     asHeaders = _getStandardHeaders()
-    
+
     if sWorkspaceId is None:
         print('[ERROR] waspy.deleteWorkspace: sWorkspaceId passed is None' +
               '  ******************************************************************************')
@@ -727,22 +726,24 @@ def deleteWorkspace(sWorkspaceId):
 
     bDeleteLayer = True
     bDeleteFile = True
-    
+
     sActualWorkspaceId = getActiveWorkspaceId()
-    
+
     openWorkspaceById(sWorkspaceId)
-    
+
     try:
-        sUrl = getWorkspaceBaseUrl() + '/ws/delete?sWorkspaceId='+sWorkspaceId+'&bDeleteLayer='+str(bDeleteLayer) + "&bDeleteFile=" + str(bDeleteFile)
-        
+        sUrl = getWorkspaceBaseUrl() + '/ws/delete?sWorkspaceId=' + sWorkspaceId + '&bDeleteLayer=' + str(
+            bDeleteLayer) + "&bDeleteFile=" + str(bDeleteFile)
+
         oResult = requests.delete(sUrl, headers=asHeaders)
-    
+
         if (oResult is not None) and (oResult.ok is True):
             return True
         else:
             return False
     finally:
         openWorkspaceById(sActualWorkspaceId)
+
 
 def getWorkspaceIdByName(sName):
     """
@@ -1073,7 +1074,7 @@ def getProcessStatus(sProcessId):
     """
     global m_sBaseUrl
     global m_sSessionId
-    
+
     if sProcessId is None:
         _log('[ERROR] waspy.getProcessStatus: Passed None, expected a process ID' +
              '  ******************************************************************************')
@@ -1082,7 +1083,7 @@ def getProcessStatus(sProcessId):
     if sProcessId == '':
         _log('[ERROR] waspy.getProcessStatus: Passed empty, expected a process ID' +
              '  ******************************************************************************')
-        return "ERROR"    
+        return "ERROR"
 
     asHeaders = _getStandardHeaders()
     payload = {'processObjId': sProcessId}
@@ -1200,7 +1201,7 @@ def updateProgressPerc(iPerc):
             _log('[ERROR] waspy.updateProgressPerc: Passed None, expected a percentage' +
                  '  ******************************************************************************')
             return ''
-        
+
         if 0 > iPerc or 100 < iPerc:
             _log('[WARNING] waspy.updateProgressPerc: passed' + str(iPerc) + ', automatically resetting in [0, 100]')
             if iPerc < 0:
@@ -1211,14 +1212,15 @@ def updateProgressPerc(iPerc):
         if m_bIsOnServer is False:
             _log("[INFO] Running locally, will not updateProgressPerc on server")
             return "RUNNING"
-        else:            
+        else:
             if (getProcId() is None) or (len(getProcId()) < 1):
                 _log('[ERROR] waspy.updateProgressPerc: Cannot update progress: process ID is not known' +
                      '  ******************************************************************************')
                 return ''
-        
+
         sStatus = "RUNNING"
-        sUrl = getBaseUrl() + "/process/updatebyid?sProcessId=" + getProcId() + "&status=" + sStatus + "&perc=" + str(iPerc) + "&sendrabbit=1"
+        sUrl = getBaseUrl() + "/process/updatebyid?sProcessId=" + getProcId() + "&status=" + sStatus + "&perc=" + str(
+            iPerc) + "&sendrabbit=1"
         asHeaders = _getStandardHeaders()
         oResponse = requests.get(sUrl, headers=asHeaders)
         sResult = ""
@@ -1268,8 +1270,6 @@ def setProcessPayload(sProcessId, data):
         return ''
 
 
-
-
 def setSubPid(sProcessId, iSubPid):
     """
     Saves the Payload of a process
@@ -1301,6 +1301,7 @@ def setSubPid(sProcessId, iSubPid):
     except Exception as oEx:
         print("[ERROR] waspy.setSubPid: exception " + str(oEx))
         return ''
+
 
 def setPayload(data):
     """
@@ -2036,6 +2037,7 @@ def asynchImportProductList(aasProduct, sProvider=None):
     # In the ASYNCH MODE return the list of process Id
     return asReturnList
 
+
 def importAndPreprocess(aoImages, sWorkflow, sPreProcSuffix="_proc.tif", sProvider=None):
     """
     Imports in WASDI and apply a SNAP Workflow to an array of EO Images as returned by searchEOImages
@@ -2048,7 +2050,7 @@ def importAndPreprocess(aoImages, sWorkflow, sPreProcSuffix="_proc.tif", sProvid
     asOriginalFiles = []
     asPreProcessedFiles = []
     asRunningProcList = []
-    
+
     asRunningDownloadList = []
 
     # For each image found
@@ -2060,59 +2062,60 @@ def importAndPreprocess(aoImages, sWorkflow, sPreProcSuffix="_proc.tif", sProvid
 
         # Import in WASDI
         sImportProcId = asynchImportProduct(oImage, sProvider)
-        
+
         if sImportProcId != "ERROR":
             asRunningDownloadList.append(sImportProcId)
             asOriginalFiles.append(sFile)
-    
-    #Flag to know if we are waiting for a donwload
+
+    # Flag to know if we are waiting for a donwload
     bWaitingDonwload = True;
-    
+
     # While there are download to wait for
     while bWaitingDonwload:
-        
+
         # Suppose they are done
         bWaitingDonwload = False
-        
+
         # For each running process
         for iImports in range(len(asRunningDownloadList)):
-            
+
             # Get the status
             sImportProcId = asRunningDownloadList[iImports]
-            
+
             if sImportProcId == "DONE" or sImportProcId == "ERROR" or sImportProcId == "WAITING":
                 continue
-             
+
             sImportStatus = getProcessStatus(sImportProcId)
-            
-            if  sImportStatus == "DONE":
+
+            if sImportStatus == "DONE":
                 # Yes, start the workflow
-                sFile = asOriginalFiles[iImports]            
+                sFile = asOriginalFiles[iImports]
                 # Generate the output name
-                sOutputFile = sFile.replace(".zip", sPreProcSuffix)            
+                sOutputFile = sFile.replace(".zip", sPreProcSuffix)
 
                 wasdiLog(sFile + " imported, starting workflow to get " + sOutputFile)
-    
+
                 # Is already there for any reason?
                 if not fileExistsOnWasdi(sOutputFile):
                     # No, start the workflow
                     sProcId = asynchExecuteWorkflow(sFile, sOutputFile, sWorkflow)
                     asRunningProcList.append(sProcId)
                     asPreProcessedFiles.append(sOutputFile)
-                
+
                 asRunningDownloadList[iImports] = "DONE"
             elif sImportStatus == "ERROR" or sImportStatus == "STOPPED":
                 asRunningDownloadList[iImports] = sImportStatus
                 pass
             else:
                 bWaitingDonwload = True
-                
-        if bWaitingDonwload:
-            time.sleep(5)                
 
-    # Checkpoint: wait for all asynch workflows to finish
+        if bWaitingDonwload:
+            time.sleep(5)
+
+            # Checkpoint: wait for all asynch workflows to finish
     wasdiLog("All image imported, waiting for all workflows to finish")
     waitProcesses(asRunningProcList)
+
 
 def asynchExecuteProcessor(sProcessorName, aoParams={}):
     """
@@ -2121,7 +2124,7 @@ def asynchExecuteProcessor(sProcessorName, aoParams={}):
     :param aoParams: a dictionary of parameters for the processor
     :return: processor ID
     """
-    
+
     global m_sActiveWorkspace
 
     _log('[INFO] waspy.asynchExecuteProcessor( ' + str(sProcessorName) + ', ' + str(aoParams) + ' )')
@@ -2151,7 +2154,7 @@ def asynchExecuteProcessor(sProcessorName, aoParams={}):
     sUrl = getBaseUrl() + "/processors/run"
 
     oResponse = requests.get(sUrl, headers=asHeaders, params=aoWasdiParams)
-    
+
     if oResponse is None:
         print('[ERROR] waspy.asynchExecuteProcessor: something broke when contacting the server, aborting' +
               '  ******************************************************************************')
@@ -2172,7 +2175,6 @@ def asynchExecuteProcessor(sProcessorName, aoParams={}):
     return ''
 
 
-
 def executeProcessor(sProcessorName, aoProcessParams):
     """
     Executes a WASDI Processor asynchronously. The method try up to three time if there is any problem.
@@ -2181,7 +2183,7 @@ def executeProcessor(sProcessorName, aoProcessParams):
     :return: the Process Id if every thing is ok, '' if there was any problem
     """
     global m_sActiveWorkspace
-    
+
     if sProcessorName is None:
         print('[ERROR] waspy.executeProcessor: processor name is None, aborting' +
               '  ******************************************************************************')
@@ -2193,27 +2195,27 @@ def executeProcessor(sProcessorName, aoProcessParams):
     if isinstance(aoProcessParams, dict) is not True:
         print('[ERROR] waspy.executeProcessor: parameters must be a dictionary but it is not, aborting' +
               '  ******************************************************************************')
-        return ''    
-    
-    # Prepare API headers and params
+        return ''
+
+        # Prepare API headers and params
     sEncodedParams = json.dumps(aoProcessParams)
-    
+
     asHeaders = _getStandardHeaders()
-    
-    sUrl = getBaseUrl() + '/processors/run?workspace=' + m_sActiveWorkspace + '&name='+sProcessorName
-    
+
+    sUrl = getBaseUrl() + '/processors/run?workspace=' + m_sActiveWorkspace + '&name=' + sProcessorName
+
     if m_bIsOnServer:
         sUrl = sUrl + '&parent=' + getProcId()
-  
+
     # Try up to three time
     iMaxRetry = 3
-    
+
     for iAttempt in range(iMaxRetry):
-        
-        wasdiLog("[INFO]: execute Processor Attempt # " + str(iAttempt+1))
-        
+
+        wasdiLog("[INFO]: execute Processor Attempt # " + str(iAttempt + 1))
+
         oResult = requests.post(sUrl, data=sEncodedParams, headers=asHeaders)
-        
+
         if oResult is None:
             wasdiLog('[ERROR] waspy.executeProcessor: something broke when contacting the server')
         elif oResult.ok is True:
@@ -2226,14 +2228,15 @@ def executeProcessor(sProcessorName, aoProcessParams):
                 wasdiLog('[ERROR] waspy.executeProcessor: cannot extract processing identifier from response, aborting')
         else:
             wasdiLog('[ERROR] waspy.executeProcessor: server returned status ' + str(oResult.status_code))
-        
+
         wasdiLog("[ERROR]: Error triggering the new process.")
         time.sleep(5)
-    
+
     wasdiLog("[ERROR]: process not triggered, too many errors")
-    
+
     # If we exit from the cycle, we do not have any result for our client...
     return ''
+
 
 def _executeProcessorV1(sProcessorName, aoProcessParams):
     """
@@ -2243,7 +2246,7 @@ def _executeProcessorV1(sProcessorName, aoProcessParams):
     :return: the Process Id if every thing is ok, '' if there was any problem
     """
     global m_sActiveWorkspace
-    
+
     if sProcessorName is None:
         print('[ERROR] waspy.executeProcessor: processor name is None, aborting' +
               '  ******************************************************************************')
@@ -2255,9 +2258,9 @@ def _executeProcessorV1(sProcessorName, aoProcessParams):
     if isinstance(aoProcessParams, dict) is not True:
         print('[ERROR] waspy.executeProcessor: parameters must be a dictionary but it is not, aborting' +
               '  ******************************************************************************')
-        return ''    
-    
-    # Prepare API headers and params
+        return ''
+
+        # Prepare API headers and params
     sEncodedParams = json.dumps(aoProcessParams)
     asHeaders = _getStandardHeaders()
     aoParams = {'workspace': m_sActiveWorkspace,
@@ -2268,16 +2271,16 @@ def _executeProcessorV1(sProcessorName, aoProcessParams):
         aoParams['parent'] = getProcId()
 
     sUrl = getBaseUrl() + '/processors/run'
-    
+
     # Try up to three time
     iMaxRetry = 3
-    
+
     for iAttempt in range(iMaxRetry):
-        
-        wasdiLog("[INFO]: execute Processor Attempt # " + str(iAttempt+1))
-    
+
+        wasdiLog("[INFO]: execute Processor Attempt # " + str(iAttempt + 1))
+
         oResult = requests.get(sUrl, headers=asHeaders, params=aoParams)
-        
+
         if oResult is None:
             wasdiLog('[ERROR] waspy.executeProcessor: something broke when contacting the server')
         elif oResult.ok is True:
@@ -2290,12 +2293,12 @@ def _executeProcessorV1(sProcessorName, aoProcessParams):
                 wasdiLog('[ERROR] waspy.executeProcessor: cannot extract processing identifier from response, aborting')
         else:
             wasdiLog('[ERROR] waspy.executeProcessor: server returned status ' + str(oResult.status_code))
-        
+
         wasdiLog("[ERROR]: Error triggering the new process.")
         time.sleep(5)
-    
+
     wasdiLog("[ERROR]: process not triggered, too many errors")
-    
+
     # If we exit from the cycle, we do not have any result for our client...
     return ''
 
@@ -2352,6 +2355,7 @@ def _waitForResume():
         except:
             _log("Exception in the _waitForResume")
 
+
 def waitProcesses(asProcIdList):
     """
     Wait for a list of processes to wait.
@@ -2361,16 +2365,16 @@ def waitProcesses(asProcIdList):
     
     :return list of strings with the same number of elements in input, with the exit status of the processes
     """
-    
+
     global m_sBaseUrl
     global m_sSessionId
 
     asHeaders = _getStandardHeaders()
 
     sUrl = m_sBaseUrl + '/process/statusbyid'
-    
+
     asReturnStatus = []
-    
+
     # Check the input
     if asProcIdList is None:
         _log("[WARNING] waitProcesses asProcIdList is none, return empty list")
@@ -2384,35 +2388,36 @@ def waitProcesses(asProcIdList):
 
     # Put this process in WAITING
     updateStatus("WAITING")
-    
+
     bAllDone = False
-    
+
     while not bAllDone:
-        
+
         oResult = requests.post(sUrl, data=json.dumps(asProcIdList), headers=asHeaders)
-    
+
         if (oResult is not None) and (oResult.ok is True):
             asResultStatus = oResult.json()
             asReturnStatus = asResultStatus
-            
+
             bAllDone = True
-            
+
             for sProcStatus in asResultStatus:
                 if not (sProcStatus == "DONE" or sProcStatus == "ERROR" or sProcStatus == "STOPPED"):
                     bAllDone = False
-                    break   
-        
+                    break
+
         if not bAllDone:
             # Sleep a little bit
             sleep(5)
             # Trace the time needed
             iTotalTime = iTotalTime + 2
-    
+
     # Wait to be resumed
     _waitForResume()
 
     # Return the list of status
     return asReturnStatus
+
 
 def uploadFile(sFileName):
     """
@@ -2679,10 +2684,10 @@ def multiSubset(sInputFile, asOutputFiles, adLatN, adLonW, adLatS, adLonE, bBigT
     aoBody["lonWList"] = adLonW;
     aoBody["latSList"] = adLatS;
     aoBody["lonEList"] = adLonE;
-    
+
     if bBigTiff:
-        aoBody["bigTiff"] = True 
-    
+        aoBody["bigTiff"] = True
+
     sSubsetSetting = json.dumps(aoBody)
     asHeaders = _getStandardHeaders()
 
@@ -2850,7 +2855,8 @@ def _internalExecuteWorkflow(asInputFileNames, asOutputFileNames, sWorkflowName,
     return ''
 
 
-def asynchMosaic(asInputFiles, sOutputFile, iNoDataValue=None, iIgnoreInputValue=None):
+def asynchMosaic(asInputFiles, sOutputFile, iNoDataValue=None, iIgnoreInputValue=None, sType=None,
+                 asCreationOptions=None):
     """
     Start a mosaic out of a set of images in asynch way
 
@@ -2858,13 +2864,32 @@ def asynchMosaic(asInputFiles, sOutputFile, iNoDataValue=None, iIgnoreInputValue
     :param sOutputFile: Name of the mosaic output file
     :param iNoDataValue: Value to use as noData. Use -1 to ignore
     :param iIgnoreInputValue: Value to ignore from the input files of the mosaic. Use -1 to ignore
+    :param sType: GDAL data type: Byte, Int16, UInt16...
+    :param asCreationOptions: additional creation options as supported by GDAL. Skip the -co flag and set the value directly
     :return: Process ID is asynchronous execution, end status otherwise. An empty string is returned in case of failure
     """
 
-    return mosaic(asInputFiles, sOutputFile, iNoDataValue, iIgnoreInputValue, True)
+    return _mosaic(asInputFiles, sOutputFile, iNoDataValue, iIgnoreInputValue, True)
 
 
-def mosaic(asInputFiles, sOutputFile, iNoDataValue=None, iIgnoreInputValue=None, bAsynch=False):
+def mosaic(asInputFiles, sOutputFile, iNoDataValue=None, iIgnoreInputValue=None, sType=None, asCreationOptions=None):
+    """
+    Start a mosaic out of a set of images in a synchronous way
+
+    :param asInputFiles: List of input files to mosaic
+    :param sOutputFile: Name of the mosaic output file
+    :param iNoDataValue: Value to use as noData. Use -1 to ignore
+    :param iIgnoreInputValue: Value to ignore from the input files of the mosaic. Use -1 to ignore
+    :param sType: GDAL data type: Byte, Int16, UInt16...
+    :param asCreationOptions: additional creation options as supported by GDAL. Skip the -co flag and set the value directly
+    :return: Process ID is asynchronous execution, end status otherwise. An empty string is returned in case of failure
+    """
+
+    return _mosaic(asInputFiles, sOutputFile, iNoDataValue, iIgnoreInputValue, sType, asCreationOptions, False)
+
+
+def _mosaic(asInputFiles, sOutputFile, iNoDataValue=None, iIgnoreInputValue=None, sType=None, asCreationOptions=None,
+            bAsynch=False):
     """
     Creates a mosaic out of a set of images
 
@@ -2872,6 +2897,8 @@ def mosaic(asInputFiles, sOutputFile, iNoDataValue=None, iIgnoreInputValue=None,
     :param sOutputFile: Name of the mosaic output file
     :param iNoDataValue: Value to use as noData. Use -1 to ignore
     :param iIgnoreInputValue: Value to ignore from the input files of the mosaic. Use -1 to ignore
+    :param sType: GDAL data type: Byte, Int16, UInt16...
+    :param asCreationOptions: additional creation options as supported by GDAL. Skip the -co flag and set the value directly
     :param bAsynch: True to return after the triggering, False to wait the process to finish
     :return: Process ID is asynchronous execution, end status otherwise. An empty string is returned in case of failure
     """
@@ -2896,6 +2923,8 @@ def mosaic(asInputFiles, sOutputFile, iNoDataValue=None, iIgnoreInputValue=None,
          str(sOutputFile) + ', ' +
          str(iNoDataValue) + ', ' +
          str(iIgnoreInputValue) + ', ' +
+         str(sType) + ', ' +
+         str(asCreationOptions) + ', ' +
          str(bAsynch) + ' )'
          )
 
@@ -2955,10 +2984,13 @@ def mosaic(asInputFiles, sOutputFile, iNoDataValue=None, iIgnoreInputValue=None,
             'outputFormat': sOutputFormat,
             'sources': asInputFiles,
             'variableNames': asBands,
-            'variableExpressions': []
+            'variableExpressions': [],
+            'type': sType,
+            'creationOptions': asCreationOptions
         }
-    except:
-        print('[ERROR] waspy.mosaic: cannot build DTO, please check your input. Aborting')
+    except Exception as oE:
+        print('[ERROR] waspy.mosaic: cannot build DTO due to ' +
+        str(type(oE)) + ': ' + oE + ' please check your input. Aborting')
         return ''
 
     asHeaders = _getStandardHeaders()
@@ -2981,7 +3013,6 @@ def mosaic(asInputFiles, sOutputFile, iNoDataValue=None, iIgnoreInputValue=None,
     return ''
 
 
-
 def copyFileToSftp(sFileName, bAsynch=None):
     """
     Copy a file from a workspace to the WASDI user's SFTP Folder
@@ -2990,7 +3021,7 @@ def copyFileToSftp(sFileName, bAsynch=None):
     :param bAsynch: True to return after the triggering, False to wait the process to finish
     :return: Process ID is asynchronous execution, end status otherwise. An empty string is returned in case of failure    
     """
-    
+
     _log('[INFO] waspy.copyFileToSftp( ' + str(sFileName) + ', ' + str(bAsynch) + ' )')
 
     if sFileName is None:
