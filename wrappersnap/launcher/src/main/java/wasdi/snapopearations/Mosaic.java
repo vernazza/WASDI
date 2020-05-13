@@ -369,8 +369,22 @@ public class Mosaic {
 				// 2.1) Enable multi-threaded compression by specifying the number of worker
 				// threads. Worth for slow compressions such as DEFLATE or LZMA.
 				//todo check the impact of multithreading
-				asArgs.add("-co");
-				asArgs.add("NUM_THREADS=4");
+				Integer iNumCores = m_oMosaicSetting.getNumThreads();
+				if(null==iNumCores) {
+					iNumCores = 1;
+				}
+				
+				if(iNumCores>1) {
+					asArgs.add("-co");
+					//we assume that the requested number of cores does not exceed the available number of cores
+					asArgs.add("NUM_THREADS="+iNumCores);
+				} else if(iNumCores < 0) {
+					asArgs.add("-co");
+					asArgs.add("NUM_THREADS=ALL_CPUS");
+				}
+				//if iNumCores is 0 or 1 we assume the creation option to be disabled, so we do not add it
+				
+				
 			}
 			
 			// Set No Data for input 
