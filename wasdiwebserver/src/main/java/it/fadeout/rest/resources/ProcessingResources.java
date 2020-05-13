@@ -183,6 +183,14 @@ public class ProcessingResources {
 			@QueryParam("sWorkspaceId") String sWorkspaceId, 
 			@QueryParam("parent") String sParentId, MosaicSetting oSetting) throws IOException {
 		Utils.debugLog("ProcessingResources.Mosaic( Session: " + sSessionId + ", Destination: " + sDestinationProductName + ", Ws:" + sWorkspaceId + ", ... )");
+		String sNumThreads = m_oServletConfig.getInitParameter("GDAL_NUM_THREADS");
+		Integer iNumThreads = 1;
+		try {
+			iNumThreads = Integer.parseInt(sNumThreads);
+		}catch (Exception oE) {
+			Utils.debugLog("ProcessingResource.mosaic: could not parse number of threads: " + oE);
+		}
+		oSetting.setNumCores(iNumThreads);
 		return executeOperation(sSessionId, "", sDestinationProductName, sWorkspaceId, oSetting, LauncherOperations.MOSAIC, sParentId);
 	}
 
