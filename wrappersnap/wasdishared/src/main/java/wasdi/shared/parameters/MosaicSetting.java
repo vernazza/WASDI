@@ -39,6 +39,8 @@ public class MosaicSetting implements ISetting{
 	// GDAL -co parameters
 	List<String> creationOptions = new ArrayList<>();
 	
+	Integer numCores = 4;
+	
 	public String getCrs() {
 		return crs;
 	}
@@ -183,6 +185,20 @@ public class MosaicSetting implements ISetting{
 	}
 	public void setInputIgnoreValue(Integer inputIgnoreValue) {
 		this.inputIgnoreValue = inputIgnoreValue;
-	}	
+	}
+	
+	/**
+	 * @return the numCores
+	 */
+	public Integer getNumThreads() {
+		return numCores;
+	}
+	/**
+	 * @param numCores the numCores to set
+	 */
+	public void setNumCores(Integer numCores) {
+		this.numCores = numCores;
+	}
+
 
 }
