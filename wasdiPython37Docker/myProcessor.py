@@ -10,7 +10,7 @@ def run():
 
     
 def WasdiHelp():
-    sHelp = "Help myProcesssor Python 3.7"
+    sHelp = "Help myProcesssor Python 3.7 for Unosat"
     return sHelp
 
 
