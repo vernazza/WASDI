@@ -58,9 +58,10 @@ RUN /usr/bin/python3.7 -m pip install --global-option=build_ext --global-option=
 #TODO DA PROVARE
 RUN apt-get update && apt install -y python-gdal
 
+
+
 # Install Rasterio
 #RUN pip install rasterio
-
 
 #CREATE PYTHON LINK
 RUN ln -sf /usr/bin/python3.7 /usr/bin/python
@@ -76,6 +77,21 @@ RUN apt-get install -y `cat /home/wasdi/packages.txt | tr "\n" " "`; exit 0
 
 # Install User Python Libs
 RUN pip install `cat /home/wasdi/pip.txt | tr "\n" " "`; exit 0
+
+
+#
+# Anaconda installing
+RUN wget https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh
+RUN bash Anaconda3-5.0.1-Linux-x86_64.sh -b
+RUN rm Anaconda3-5.0.1-Linux-x86_64.sh
+
+
+## Updating Anaconda packages
+RUN conda install anaconda
+RUN conda update conda
+##RUN conda update anaconda
+RUN conda update --all
+
 
 # Set working dir
 WORKDIR /home/wasdi
