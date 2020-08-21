@@ -162,7 +162,6 @@ public class ProcessorLogRepository extends MongoRepository {
      * @return True or False in case of error
      */
     public boolean deleteLogsByProcessWorkspaceId(String sProcessWorkspaceId) {
-        
         if(!Utils.isNullOrEmpty(sProcessWorkspaceId)) {
         	
 	        try {

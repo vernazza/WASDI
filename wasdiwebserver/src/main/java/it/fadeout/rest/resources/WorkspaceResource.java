@@ -22,12 +22,16 @@ import org.apache.commons.io.FileUtils;
 
 import it.fadeout.Wasdi;
 import wasdi.shared.business.DownloadedFile;
+import wasdi.shared.business.ProcessWorkspace;
+import wasdi.shared.business.ProcessorLog;
 import wasdi.shared.business.ProductWorkspace;
 import wasdi.shared.business.PublishedBand;
 import wasdi.shared.business.User;
 import wasdi.shared.business.Workspace;
 import wasdi.shared.business.WorkspaceSharing;
 import wasdi.shared.data.DownloadedFilesRepository;
+import wasdi.shared.data.ProcessWorkspaceRepository;
+import wasdi.shared.data.ProcessorLogRepository;
 import wasdi.shared.data.ProductWorkspaceRepository;
 import wasdi.shared.data.PublishedBandsRepository;
 import wasdi.shared.data.WorkspaceRepository;
@@ -404,16 +408,17 @@ public class WorkspaceResource {
 	@Produces({ "application/xml", "application/json", "text/xml" })
 	public Response deleteWorkspace(@HeaderParam("x-session-token") String sSessionId,
 			@QueryParam("sWorkspaceId") String sWorkspaceId, @QueryParam("bDeleteLayer") Boolean bDeleteLayer,
-			@QueryParam("bDeleteFile") Boolean bDeleteFile) {
+			@QueryParam("bDeleteFile") Boolean bDeleteFile,
+			@QueryParam("deleteProcesses") Boolean bDeleteProcesses, @QueryParam("deleteLogs") Boolean bDeleteLogs ) {
 
 		Utils.debugLog("WorkspaceResource.DeleteWorkspace( Session: " + sSessionId + ", WS: " + sWorkspaceId
-				+ ", DeleteLayer: " + bDeleteLayer + ", DeleteFile: " + bDeleteFile + " )");
+				+ ", DeleteLayer: " + bDeleteLayer + ", DeleteFile: " + bDeleteFile + ", DeleteProcesses: " + bDeleteProcesses + ", DeleteLogs: " + bDeleteLogs + " )");
 
 		// Validate Session
 		User oUser = Wasdi.getUserFromSession(sSessionId);
 		if (oUser == null) {
 			Utils.debugLog("WorkspaceResource.DeleteWorkspace( Session: " + sSessionId + ", WS: " + sWorkspaceId
-					+ ", DeleteLayer: " + bDeleteLayer + ", DeleteFile: " + bDeleteFile + " ): invalid session");
+					+ ", DeleteLayer: " + bDeleteLayer + ", DeleteFile: " + bDeleteFile+ ", DeleteProcesses: " + bDeleteProcesses + ", DeleteLogs: " + bDeleteLogs + " ): invalid session");
 			return null;
 		}
 		if (Utils.isNullOrEmpty(oUser.getUserId()))
@@ -448,7 +453,7 @@ public class WorkspaceResource {
 				List<ProductWorkspace> aoProductsWorkspaces = oProductWorkspaceRepository.getProductsByWorkspace(sWorkspaceId);
 
 				// Do we need to delete layers?
-				if (bDeleteLayer) {
+				if (null!= bDeleteLayer && bDeleteLayer) {
 					try {
 						Utils.debugLog("ProductResource.DeleteProduct: Deleting workspace layers");
 
@@ -522,7 +527,7 @@ public class WorkspaceResource {
 
 				}
 
-				if (bDeleteFile) {
+				if (null!= bDeleteFile && bDeleteFile) {
 					try {
 
 						Utils.debugLog("WorkspaceResource.DeleteWorkspace: Delete workspace folder " + sWorkspacePath);
@@ -558,6 +563,54 @@ public class WorkspaceResource {
 						Utils.debugLog("WorkspaceResource.DeleteWorkspace: Error deleting workspace directory: " + oEx);
 					}
 				}
+				
+				//1 retrieve processes
+				List<ProcessWorkspace> aoProcesses = null;
+				try {
+					ProcessWorkspaceRepository oProcessRepo = new ProcessWorkspaceRepository();
+					aoProcesses = oProcessRepo.getProcessByWorkspace(sWorkspaceId);
+				} catch (Exception oE) {
+					Utils.debugLog("WorkspaceResource.DeleteWorkspace( Session: " + sSessionId + ", WS: " + sWorkspaceId
+							+ ", DelLayer: " + bDeleteLayer + ", DelFile: " + bDeleteFile + ", DelProc: " + bDeleteProcesses + ", DelLogs: " + bDeleteLogs + " ): could not retrieve processes due to: " + oE);
+				}
+				
+				//2 kill running processes && delete them
+				if(null!=bDeleteProcesses && bDeleteProcesses) {
+					try {
+						//todo reconstruct tree
+						//todo launch kill tree on every father
+						//todo new operation: delete process workspace
+						//todo for each process delete process workspace
+					} catch (Exception oE) {
+						Utils.debugLog("WorkspaceResource.DeleteWorkspace( Session: " + sSessionId + ", WS: " + sWorkspaceId
+								+ ", DelLayer: " + bDeleteLayer + ", DelFile: " + bDeleteFile + ", DelProc: " + bDeleteProcesses + ", DelLogs: " + bDeleteLogs + " ): could not delete processes due to: " + oE);
+					}
+				}
+
+				//3 delete logs
+				if(null != bDeleteLogs && bDeleteLogs) {
+					//todo make this asyncronous: new operation: deleteLogs
+					try {
+						//use all processes found before
+						//for each process, delete all logs
+						ProcessorLogRepository oLogRepo = new ProcessorLogRepository();
+						int iDeletedLogs = 0;
+						for (ProcessWorkspace oProcessWorkspace : aoProcesses) {
+							String sProcessWorkspaceId = oProcessWorkspace.getProcessObjId();
+							if(oLogRepo.deleteLogsByProcessWorkspaceId(sProcessWorkspaceId)) {
+								++iDeletedLogs;
+							}
+						}
+						if(iDeletedLogs != aoProcesses.size()) {
+							Utils.debugLog("WorkspaceResource.DeleteWorkspace( Session: " + sSessionId + ", WS: " + sWorkspaceId + "... ): warning: deleted " + iDeletedLogs + " out of " + aoProcesses.size() + " processes");
+						}
+					} catch (Exception oE) {
+						Utils.debugLog("WorkspaceResource.DeleteWorkspace( Session: " + sSessionId + ", WS: " + sWorkspaceId
+								+ ", DelLayer: " + bDeleteLayer + ", DelFile: " + bDeleteFile + ", DelProc: " + bDeleteProcesses + ", DelLogs: " + bDeleteLogs + " ): could not delete logs due to: " + oE);
+					}
+				}
+				
+				
 
 				// Delete Product Workspace entry
 				oProductWorkspaceRepository.deleteByWorkspaceId(sWorkspaceId);
@@ -567,8 +620,9 @@ public class WorkspaceResource {
 				oWorkspaceSharingRepository.deleteByWorkspaceId(sWorkspaceId);
 
 				return Response.ok().build();
-			} else
+			} else {
 				Utils.debugLog("WorkspaceResource.DeleteWorkspace: Error deleting workspace on data base");
+			}
 
 		} catch (Exception oEx) {
 			Utils.debugLog("WorkspaceResource.DeleteWorkspace: " + oEx);

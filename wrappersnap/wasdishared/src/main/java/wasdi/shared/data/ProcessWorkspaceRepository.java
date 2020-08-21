@@ -89,7 +89,6 @@ public class ProcessWorkspaceRepository extends MongoRepository {
      * @return
      */
     public boolean deleteProcessWorkspace(String sId) {
-
         try {
             getCollection(m_sThisCollection).deleteOne(new Document("_id", new ObjectId(sId)));
 
@@ -108,7 +107,6 @@ public class ProcessWorkspaceRepository extends MongoRepository {
      * @return
      */
     public boolean deleteProcessWorkspaceByPid(int iPid) {
-
         try {
             getCollection(m_sThisCollection).deleteOne(new Document("pid", iPid));
 
@@ -127,7 +125,6 @@ public class ProcessWorkspaceRepository extends MongoRepository {
      * @return
      */
     public boolean deleteProcessWorkspaceByProcessObjId(String sProcessObjId) {
-
         try {
             getCollection(m_sThisCollection).deleteOne(new Document("processObjId", sProcessObjId));
 
