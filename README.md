@@ -1,4 +1,6 @@
 # WASDI
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fvernazza%2FWASDI.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fvernazza%2FWASDI?ref=badge_shield)
+
 
 Web Advanced Space Developer Interface
 
@@ -84,3 +86,6 @@ make sure Elicpse uses the jre within the jdk and not another one installed sepa
 ## Deploy
 
 - **TODO** how to deploy
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fvernazza%2FWASDI.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fvernazza%2FWASDI?ref=badge_large)
