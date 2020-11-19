@@ -13,7 +13,7 @@ var WasdiApplicationUIController = (function() {
      * @param oProcessorService
      * @constructor
      */
-    function WasdiApplicationUIController($scope, oConstantsService, oAuthService, oProcessorService, oWorkspaceService, oRabbitStompService, $state, oProductService, oProcessesLaunchedService, $sce, $rootScope) {
+    function WasdiApplicationUIController($scope, oConstantsService, oAuthService, oProcessorService, oWorkspaceService, oRabbitStompService, $state, oProductService, oProcessesLaunchedService, oModalService, $sce, $rootScope) {
         /**
          * Angular Scope
          */
@@ -59,6 +59,10 @@ var WasdiApplicationUIController = (function() {
          * Product Service
          */
         this.m_oProductService = oProductService;
+        /**
+         * Modal Service
+         */
+        this.m_oModalService = oModalService;
         /**
          * SCE Angular Service
          */
@@ -209,7 +213,7 @@ var WasdiApplicationUIController = (function() {
                 if(utilsIsObjectNullOrUndefined(sHelpMessage) === false )
                 {
                     try {
-                        oHelp = JSON.parse(sHelpMessage);
+                        var oHelp = JSON.parse(sHelpMessage);
                         sHelpMessage = oHelp.help;
                     }
                     catch(err) {
@@ -434,13 +438,13 @@ var WasdiApplicationUIController = (function() {
                     let sWorkspaceId = data.stringValue;
 
                     // Get the view model of this workspace
-                    oController.m_oWorkspaceService.getWorkspaceEditorViewModel(sWorkspaceId).success(function (data, status) {
-                        if (utilsIsObjectNullOrUndefined(data) == false)
+                    oController.m_oWorkspaceService.getWorkspaceEditorViewModel(sWorkspaceId).success(function (oData, status) {
+                        if (utilsIsObjectNullOrUndefined(oData) == false)
                         {
                             // Ok execute
-                            oController.executeProcessorInWorkspace(oController, sApplicationName, oProcessorInput, data);
+                            oController.executeProcessorInWorkspace(oController, sApplicationName, oProcessorInput, oData);
                         }
-                    }).error(function (data,status) {
+                    }).error(function () {
                         utilsVexDialogAlertTop('GURU MEDITATION<br>ERROR OPENING THE WORKSPACE');
                     });
 
@@ -612,8 +616,34 @@ var WasdiApplicationUIController = (function() {
         }).error(function (data, status) {
             utilsVexDialogAlertTop('GURU MEDITATION<br>ERROR READING PRODUCT LIST');
         });
+    }
+
+    WasdiApplicationUIController.prototype.editClick= function() {
+        var oController = this;
+
+        oController.m_oProcessorService.getDeployedProcessor(oController.m_oApplication.processorId).success(function (data) {
+            oController.m_oModalService.showModal({
+                templateUrl: "dialogs/processor/ProcessorView.html",
+                controller: "ProcessorController",
+                inputs: {
+                    extras: {
+                        processor:data
+                    }
+                }
+            }).then(function (modal) {
+                modal.element.modal();
+                modal.close.then(function (oResult) {
+                    if (utilsIsObjectNullOrUndefined(oResult) == false) {
+                        oController.m_oApplication = oResult;
+                    }
+                });
+            });
+        }).error(function () {
+
+        });
 
     }
+
 
 
     WasdiApplicationUIController.$inject = [
@@ -626,6 +656,7 @@ var WasdiApplicationUIController = (function() {
         '$state',
         'ProductService',
         'ProcessesLaunchedService',
+        'ModalService',
         '$sce',
         '$rootScope'
     ];

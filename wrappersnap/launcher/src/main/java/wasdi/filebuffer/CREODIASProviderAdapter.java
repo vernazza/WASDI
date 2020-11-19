@@ -26,8 +26,6 @@ import org.json.JSONObject;
 import com.google.common.base.Preconditions;
 import com.google.common.io.CharStreams;
 
-import org.apache.log4j.Logger;
-
 import wasdi.LoggerWrapper;
 import wasdi.shared.business.ProcessWorkspace;
 import wasdi.shared.opensearch.creodias.DiasResponseTranslatorCREODIAS;
@@ -44,7 +42,6 @@ public class CREODIASProviderAdapter extends ProviderAdapter {
 	/**
 	 * 
 	 */
-	//TODO uncapitalize method
 	public CREODIASProviderAdapter() {
 		// TODO Auto-generated constructor stub
 	}
@@ -109,8 +106,16 @@ public class CREODIASProviderAdapter extends ProviderAdapter {
 					bLoop = false;
 				}
 				boolean bInit = true;
+				
+				int iMaxAttemps = 10;
+				int iAttemps = 0;
 
 				while(bLoop) {
+					
+					if (iAttemps > iMaxAttemps) {
+						m_oLogger.info("CREODIASProviderAdapter.ExecuteDownloadFile: made " + iAttemps + ", this is really too much");
+						break;
+					}
 					//todo tune waiting times
 					long lWaitStep = 60l;
 					long lUp = 300l;
@@ -134,8 +139,8 @@ public class CREODIASProviderAdapter extends ProviderAdapter {
 						//todo replace this polling using a callback
 						//todo set processor status to waiting
 						if(bInit) {
-							m_oLogger.info("CREODIASProviderAdapter.executeDownloadFile: waiting for order to complete");
-							Long lFirstWait = 3600l;
+							Long lFirstWait = 360l;
+							m_oLogger.info("CREODIASProviderAdapter.executeDownloadFile: waiting for order to complete, sleep for " + lFirstWait);
 							TimeUnit.SECONDS.sleep(lFirstWait);
 							bInit = false;
 						} else {
@@ -151,6 +156,8 @@ public class CREODIASProviderAdapter extends ProviderAdapter {
 							throw new NullPointerException("JSON status is null, aborting");
 						}
 					}
+					
+					iAttemps ++;
 				}
 			}
 
@@ -251,16 +258,7 @@ public class CREODIASProviderAdapter extends ProviderAdapter {
 		String sOrderUrl = "https://finder.creodias.eu/api/order/";
 
 		try {
-			URL oUrl = new URL(sOrderUrl);
-
-			HttpURLConnection oHttpConn = (HttpURLConnection) oUrl.openConnection();
-			oHttpConn.setRequestMethod("POST");
-			oHttpConn.addRequestProperty("Content-Type","application/json");
-			//oHttpConn.setRequestProperty("Accept", "*/*");
-			//oHttpConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0");
-
-			oHttpConn.addRequestProperty("Keycloak-Token", obtainKeycloakToken(sDownloadUser, sDownloadPassword));
-
+			
 			JSONObject oJsonRequest = new JSONObject();
 
 
@@ -299,12 +297,25 @@ public class CREODIASProviderAdapter extends ProviderAdapter {
 			oJsonRequest.put("identifier_list", oJsonProductsToOrder);
 
 			//processor
-			oJsonRequest.put("processor", getRequiredProcessor(sFileURL));
+			oJsonRequest.put("processor", getRequiredProcessor(sFileURL));			
+			
+			URL oUrl = new URL(sOrderUrl);
 
+			HttpURLConnection oHttpConn = (HttpURLConnection) oUrl.openConnection();
 			oHttpConn.setDoOutput(true);
-			oHttpConn.connect();
+			oHttpConn.setRequestMethod("POST");
+			oHttpConn.addRequestProperty("Content-Type","application/json");
+			//oHttpConn.setRequestProperty("Accept", "*/*");
+			//oHttpConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0");
+
+			oHttpConn.addRequestProperty("Keycloak-Token", obtainKeycloakToken(sDownloadUser, sDownloadPassword));
+
+			
+			//oHttpConn.connect();
 			OutputStream oOutputStream = oHttpConn.getOutputStream();
 			oOutputStream.write(oJsonRequest.toString().getBytes());
+			
+			m_oLogger.info("CREODIASProviderAdapter.orderProduct: payload - " + oJsonRequest.toString());
 
 			return handleResponseStatus(oHttpConn);
 		} catch (Exception oE) {
@@ -318,7 +329,12 @@ public class CREODIASProviderAdapter extends ProviderAdapter {
 		try {
 			String sProduct = getFileName(sFileURL);
 			if(sProduct.startsWith("S1")) {
-				return "";
+				if (sProduct.contains("_SLC_") || sProduct.contains("_RAW_")) {
+					return "download";
+				}
+				else {
+					return "";
+				}
 			}
 		} catch (Exception oE) {
 			m_oLogger.error("CREODIASPRoviderAdapter.getRequiredProcessor: " + oE);
@@ -390,7 +406,7 @@ public class CREODIASProviderAdapter extends ProviderAdapter {
 			
 			switch(sStatus.toLowerCase()) {
 			//order if...
-			//31 means that product is orderable and waiting for download to our cache,
+			//	31 means that product is orderable and waiting for download to our cache,
 			case "31":
 				//37 means that product is processed by our platform,
 			case "37":
@@ -473,7 +489,7 @@ public class CREODIASProviderAdapter extends ProviderAdapter {
 				if(null!=oInputStream) {
 					Util.copyStream(oInputStream, oBytearrayOutputStream);
 					String sResult = oBytearrayOutputStream.toString();
-					m_oLogger.debug("CREODIASProviderAdapter.obtainKeycloakToken: json: " + sResult);
+					//m_oLogger.debug("CREODIASProviderAdapter.obtainKeycloakToken: json: " + sResult);
 					JSONObject oJson = new JSONObject(sResult);
 					String sToken = oJson.optString("access_token", null);
 					return sToken;

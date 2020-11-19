@@ -92,7 +92,6 @@
             &:after{
                 right: 0;
                 border: 9px solid transparent;
-                border-right-color: transparent;
                 content: " ";
                 height: 0;
                 width: 0;
@@ -111,6 +110,20 @@
             text-decoration: none!important;
         }
     }
+
+    .edit-btn {
+        background-color: $wasdigreen;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8em;
+        display: inline;
+        &:hover {
+            background-color: $darkwasdigreen;
+        }
+    }
+
 }
 
 /*================ ROCKET ANIMATION ==============*/
